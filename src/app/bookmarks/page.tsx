@@ -1,46 +1,29 @@
-import { db } from "@/lib/firebase";
-import { collection, query, where, getDocs } from "firebase/firestore";
 import { getAuthSession } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { getBookmarksForUser } from "@/lib/firebase";
 import Link from "next/link";
 
 export default async function BookmarksPage() {
   const session = await getAuthSession();
 
+  // 🔒 Redirect if not logged in
   if (!session?.user) {
-    return (
-      <div className="p-6 text-center text-red-500">
-        Please log in to see your bookmarks.
-      </div>
-    );
+    redirect("/login");
   }
 
-  const q = query(
-    collection(db, "bookmarks"),
-    where("userId", "==", session.user.uid)
-  );
-
-  const snapshot = await getDocs(q);
-  const bookmarks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  const bookmarks = await getBookmarksForUser(session.user.id);
 
   return (
-    <div className="p-6 max-w-3xl mx-auto">
+    <div>
       <h1 className="text-2xl font-bold mb-4">🔖 Your Bookmarks</h1>
-
       {bookmarks.length === 0 ? (
-        <p className="text-gray-500">No bookmarks found.</p>
+        <p>No bookmarks yet.</p>
       ) : (
-        <ul className="space-y-4">
-          {bookmarks.map((bm: any) => (
-            <li key={bm.id} className="border p-4 rounded">
-              <h2 className="text-lg font-semibold">📘 {bm.novelId}</h2>
-              <p className="text-sm text-gray-600">
-                Chapter: {bm.chapterId}
-              </p>
-              <Link
-                href={`/novels/${bm.novelId}/chapter/${bm.chapterId}`}
-                className="inline-block mt-2 text-blue-600 hover:underline"
-              >
-                ➤ Continue Reading
+        <ul className="space-y-2">
+          {bookmarks.map((b) => (
+            <li key={b.id}>
+              <Link href={`/novels/${b.novelId}/chapter/${b.chapterId}`}>
+                📘 {b.novelTitle} — Chapter {b.chapterTitle}
               </Link>
             </li>
           ))}
