@@ -1,51 +1,45 @@
+import { getAuthSession } from "@/lib/auth";
 import { db } from "@/lib/firebase";
-import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import Link from "next/link";
 
-export default async function NovelDetailsPage({ params }: { params: { novelId: string } }) {
-  const novelRef = doc(db, "novels", params.novelId);
-  const novelSnap = await getDoc(novelRef);
+interface Props {
+  params: {
+    novelId: string;
+  };
+}
 
-  if (!novelSnap.exists()) {
-    return <div className="p-6 text-red-500">❌ Novel not found</div>;
+export default async function NovelPage({ params }: Props) {
+  const { novelId } = params;
+  const session = await getAuthSession();
+
+  let bookmarkedChapter: string | null = null;
+
+  if (session?.user?.uid) {
+    const bookmarkRef = doc(db, "bookmarks", `${session.user.uid}_${novelId}`);
+    const snap = await getDoc(bookmarkRef);
+    if (snap.exists()) {
+      const data = snap.data();
+      bookmarkedChapter = data.chapterId;
+    }
   }
 
-  const novel = { id: novelSnap.id, ...novelSnap.data() };
-
-  const chapterQuery = query(collection(db, "chapters"), where("novelId", "==", params.novelId));
-  const chapterSnap = await getDocs(chapterQuery);
-  const chapters = chapterSnap.docs
-    .map((doc) => ({ id: doc.id, ...doc.data() }))
-    .sort((a: any, b: any) => (a.number || 0) - (b.number || 0));
-
   return (
-    <div className="max-w-3xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-2">{novel.title}</h1>
-      <p className="text-gray-600 mb-1">{novel.genres?.join(" / ")}</p>
-      <p className="text-gray-700 mb-6 whitespace-pre-wrap">{novel.description}</p>
+    <main className="p-6 max-w-2xl mx-auto">
+      <h1 className="text-3xl font-bold mb-4">📚 Novel: {novelId}</h1>
 
-      {chapters.length > 0 && (
+      {bookmarkedChapter ? (
         <Link
-          href={`/novels/${params.novelId}/chapter/${chapters[0].id}`}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 inline-block mb-6"
+          href={`/novels/${novelId}/chapter/${bookmarkedChapter}`}
+          className="inline-block mb-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
         >
-          ▶️ Start Reading
+          🔖 Continue Reading Chapter {bookmarkedChapter}
         </Link>
+      ) : (
+        <p className="text-gray-500 mb-4">No bookmark found.</p>
       )}
 
-      <h2 className="text-xl font-semibold mb-3">📖 Chapters</h2>
-      <ul className="space-y-2">
-        {chapters.map((chapter: any) => (
-          <li key={chapter.id}>
-            <Link
-              href={`/novels/${params.novelId}/chapter/${chapter.id}`}
-              className="text-blue-600 hover:underline"
-            >
-              {chapter.title}
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </div>
+      {/* Other novel details or chapter list goes here */}
+    </main>
   );
 }
