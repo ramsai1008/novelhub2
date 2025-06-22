@@ -1,71 +1,44 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import { auth, db } from "@/lib/firebase";
-import { collection, getDocs, doc, getDoc } from "firebase/firestore";
-import { onAuthStateChanged } from "firebase/auth";
+import { getDocs, collection, doc, getDoc, query, where } from "firebase/firestore";
 import Link from "next/link";
+import { getAuthSession } from "@/lib/auth"; // You may have your own auth util
 
-export default function HomePage() {
-  const [user, setUser] = useState<any>(null);
-  const [bookmarks, setBookmarks] = useState<
-    { novelId: string; chapterId: string; title: string }[]
-  >([]);
+export default async function HomePage() {
+  const session = await getAuthSession(); // or auth.currentUser if using client-side
+  let bookmarkData = null;
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      setUser(currentUser);
-      if (currentUser) {
-        const bookmarksRef = collection(db, "users", currentUser.uid, "bookmarks");
-        const snapshot = await getDocs(bookmarksRef);
+  if (session?.user?.uid) {
+    const bookmarkRef = doc(db, "bookmarks", `${session.user.uid}_novelId`);
+    const bookmarkSnap = await getDoc(bookmarkRef);
+    if (bookmarkSnap.exists()) {
+      const data = bookmarkSnap.data();
+      bookmarkData = {
+        novelId: data.novelId,
+        chapterId: data.chapterId,
+      };
+    }
+  }
 
-        const bookmarkData = await Promise.all(
-          snapshot.docs.map(async (docSnap) => {
-            const novelId = docSnap.id;
-            const chapterId = docSnap.data().chapterId;
-
-            const chapterRef = doc(db, "novels", novelId, "chapters", chapterId);
-            const chapterSnap = await getDoc(chapterRef);
-
-            const chapterData = chapterSnap.exists() ? chapterSnap.data() : {};
-            const title = chapterData.title || `Chapter ${chapterId}`;
-
-            return { novelId, chapterId, title };
-          })
-        );
-
-        setBookmarks(bookmarkData);
-      }
-    });
-
-    return () => unsubscribe();
-  }, []);
+  const novelsSnap = await getDocs(collection(db, "novels"));
+  const novels = novelsSnap.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
 
   return (
-    <main className="max-w-4xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6">📚 Welcome to NovelHub</h1>
-
-      {user && bookmarks.length > 0 && (
-        <section className="mb-8">
-          <h2 className="text-xl font-semibold mb-2">📌 Continue Reading</h2>
-          <ul className="space-y-2">
-            {bookmarks.map((bookmark, index) => (
-              <li key={index}>
-                <Link
-                  href={`/novels/${bookmark.novelId}/chapter/${bookmark.chapterId}`}
-                  className="text-blue-600 hover:underline"
-                >
-                  {bookmark.title}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
+    <main className="p-6 max-w-3xl mx-auto">
+      {bookmarkData && (
+        <div className="mb-8 bg-yellow-100 border border-yellow-300 p-4 rounded">
+          <p className="text-sm">📌 Continue Reading</p>
+          <Link
+            href={`/novels/${bookmarkData.novelId}/chapter/${bookmarkData.chapterId}`}
+            className="text-lg font-bold underline"
+          >
+            Go to your last read chapter →
+          </Link>
+        </div>
       )}
 
-      <p className="text-gray-600">
-        Explore thousands of novels and track your favorites. Login to get started!
-      </p>
-    </main>
-  );
-}
+      <h1 className="text-2xl font-bold mb-4">📚 All Novels</h1>
+      <div className="space-y-3">
+        {novels.ma

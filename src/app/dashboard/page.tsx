@@ -1,87 +1,41 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { auth, db } from "@/lib/firebase";
-import {
-  collection,
-  getDocs,
-  doc,
-  getDoc,
-} from "firebase/firestore";
-import { useRouter } from "next/navigation";
+import { getAuthSession } from "@/lib/auth";
+import { db } from "@/lib/firebase";
+import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
 import Link from "next/link";
-import { signOut, onAuthStateChanged } from "firebase/auth";
 
-export default function DashboardPage() {
-  const [user, setUser] = useState<any>(null);
-  const [bookmarks, setBookmarks] = useState<any[]>([]);
-  const router = useRouter();
+export default async function DashboardPage() {
+  const session = await getAuthSession();
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (u) => {
-      if (!u) {
-        router.push("/login");
-        return;
-      }
-      setUser(u);
+  if (!session?.user?.uid) {
+    return (
+      <main className="p-6 max-w-xl mx-auto">
+        <p>Please <Link href="/login" className="underline">log in</Link> to view your dashboard.</p>
+      </main>
+    );
+  }
 
-      const userBookmarksRef = collection(
-        db,
-        "users",
-        u.uid,
-        "bookmarks"
-      );
-      const bookmarkSnaps = await getDocs(userBookmarksRef);
-      const bookmarkData = await Promise.all(
-        bookmarkSnaps.docs.map(async (docSnap) => {
-          const novelId = docSnap.id;
-          const data = docSnap.data();
-          const chapterId = data.chapterId;
-
-          const novelDoc = await getDoc(doc(db, "novels", novelId));
-          const novel = novelDoc.exists() ? novelDoc.data() : null;
-
-          return {
-            novelId,
-            chapterId,
-            novelTitle: novel?.title ?? "Unknown Novel",
-          };
-        })
-      );
-
-      setBookmarks(bookmarkData);
-    });
-
-    return () => unsubscribe();
-  }, []);
-
-  const handleLogout = async () => {
-    await signOut(auth);
-    router.push("/");
-  };
+  const q = query(
+    collection(db, "bookmarks"),
+    where("userId", "==", session.user.uid),
+    orderBy("timestamp", "desc")
+  );
+  const snap = await getDocs(q);
+  const bookmarks = snap.docs.map((doc) => doc.data());
 
   return (
-    <main className="max-w-3xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4">📚 Your Dashboard</h1>
-
-      <button
-        onClick={handleLogout}
-        className="mb-6 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-      >
-        🚪 Logout
-      </button>
-
+    <main className="p-6 max-w-xl mx-auto">
+      <h1 className="text-2xl font-bold mb-4">📌 Your Bookmarks</h1>
       {bookmarks.length === 0 ? (
-        <p>No bookmarks found.</p>
+        <p>You haven’t bookmarked anything yet.</p>
       ) : (
         <ul className="space-y-3">
-          {bookmarks.map((b, i) => (
-            <li key={i}>
+          {bookmarks.map((bm, idx) => (
+            <li key={idx}>
               <Link
-                href={`/novels/${b.novelId}/chapter/${b.chapterId}`}
-                className="text-blue-600 hover:underline"
+                href={`/novels/${bm.novelId}/chapter/${bm.chapterId}`}
+                className="block p-3 bg-white border rounded shadow hover:bg-gray-100"
               >
-                Continue reading: <strong>{b.novelTitle}</strong>
+                📖 Novel: {bm.novelId} — Chapter: {bm.chapterId}
               </Link>
             </li>
           ))}
