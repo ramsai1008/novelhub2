@@ -1,40 +1,43 @@
 import "./globals.css";
 import Link from "next/link";
 import { Inter } from "next/font/google";
+import { getAuthSession } from "@/lib/auth";
+import LogoutButton from "@/components/LogoutButton"; // We'll add this next
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
   title: "NovelHub",
-  description: "Read translated Chinese and Korean web novels online!",
+  description: "Read novels and bookmark your progress",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const session = await getAuthSession();
+
   return (
     <html lang="en">
       <body className={inter.className}>
         <header className="bg-gray-800 text-white p-4">
-          <nav className="max-w-5xl mx-auto flex gap-6">
-            <Link href="/" className="hover:underline font-semibold">
-              Home
-            </Link>
-            <Link href="/novels" className="hover:underline">
-              Browse Novels
-            </Link>
-            <Link href="/dashboard" className="hover:underline">
-              Dashboard
-            </Link>
-            <Link href="/login" className="hover:underline ml-auto">
-              Login
-            </Link>
+          <nav className="flex gap-4 max-w-5xl mx-auto">
+            <Link href="/" className="hover:underline">🏠 Home</Link>
+            <Link href="/novels" className="hover:underline">📚 Novels</Link>
+            <Link href="/bookmarks" className="hover:underline">🔖 Bookmarks</Link>
+
+            {session?.user ? (
+              <>
+                <span className="ml-auto">👤 {session.user.name || session.user.email}</span>
+                <LogoutButton />
+              </>
+            ) : (
+              <Link href="/login" className="ml-auto hover:underline">🔐 Login</Link>
+            )}
           </nav>
         </header>
-        <main className="min-h-screen bg-gray-50 text-gray-900">
-          {children}
-        </main>
-        <footer className="bg-gray-100 text-center py-4 mt-10 text-sm text-gray-600">
-          © {new Date().getFullYear()} NovelHub. All rights reserved.
-        </footer>
+        <main className="max-w-5xl mx-auto p-6">{children}</main>
       </body>
     </html>
   );
