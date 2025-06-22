@@ -14,22 +14,7 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-import { db } from "./firebase-config"; // Adjust path if different
-import { collection, getDocs, query, where } from "firebase/firestore";
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-export async function getFeaturedNovels() {
-  try {
-    const novelsRef = collection(db, "novels");
-    const q = query(novelsRef, where("featured", "==", true));
-    const snapshot = await getDocs(q);
-
-    return snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-  } catch (error) {
-    console.error("Error fetching featured novels:", error);
-    return [];
-  }
-}
+export { auth, db };
