@@ -1,4 +1,3 @@
-// src/app/novels/page.tsx
 "use client";
 import { useEffect, useState } from "react";
 import { db } from "@/lib/firebase";
@@ -16,12 +15,12 @@ export default function NovelsPage() {
   }, []);
 
   return (
-    <div className="p-4">
+    <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">All Novels</h1>
-      <ul className="space-y-2">
+      <ul className="space-y-3">
         {novels.map((novel: any) => (
           <li key={novel.id}>
-            <a className="text-blue-600 underline" href={`/novels/${novel.id}`}>
+            <a href={`/novels/${novel.id}`} className="text-blue-600 underline">
               {novel.title}
             </a>
           </li>
