@@ -1,54 +1,76 @@
 "use client";
+
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { db } from "@/lib/firebase";
 import { collection, getDocs } from "firebase/firestore";
+import Link from "next/link";
 
-export default function Home() {
-  const [novels, setNovels] = useState([]);
+export default function AllNovelsPage() {
+  const [novels, setNovels] = useState<any[]>([]);
+  const [query, setQuery] = useState("");
+  const [genreFilter, setGenreFilter] = useState("");
 
   useEffect(() => {
     const fetchNovels = async () => {
-      const snapshot = await getDocs(collection(db, "novels"));
-      setNovels(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      const snap = await getDocs(collection(db, "novels"));
+      const data = snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      setNovels(data);
     };
     fetchNovels();
   }, []);
 
-  return (
-    <main className="min-h-screen bg-gray-100 py-8 px-4">
-      <div className="max-w-5xl mx-auto">
-        <h1 className="text-3xl font-bold text-center mb-8">📚 NovelHub</h1>
+  const filtered = novels.filter((n) => {
+    const matchesTitle = n.title.toLowerCase().includes(query.toLowerCase());
+    const matchesGenre = genreFilter ? n.genres?.includes(genreFilter) : true;
+    return matchesTitle && matchesGenre;
+  });
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {novels.map((novel: any) => (
-            <div
-              key={novel.id}
-              className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition"
-            >
-              {novel.cover && (
-                <img
-                  src={novel.cover}
-                  alt={novel.title}
-                  className="h-48 w-full object-cover"
-                />
-              )}
-              <div className="p-4">
-                <h2 className="text-lg font-semibold">{novel.title}</h2>
-                <p className="text-sm text-gray-600 line-clamp-3">
-                  {novel.description}
-                </p>
-                <Link
-                  href={`/novels/${novel.id}`}
-                  className="inline-block mt-3 text-blue-500 hover:underline text-sm"
-                >
-                  Read More →
-                </Link>
-              </div>
-            </div>
+  const uniqueGenres = Array.from(
+    new Set(novels.flatMap((n) => n.genres || []))
+  );
+
+  return (
+    <main className="max-w-5xl mx-auto p-6">
+      <h1 className="text-2xl font-bold mb-4">📖 Browse Novels</h1>
+
+      <div className="flex gap-4 mb-6">
+        <input
+          type="text"
+          placeholder="Search title..."
+          className="border p-2 flex-1 rounded"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+        <select
+          className="border p-2 rounded"
+          value={genreFilter}
+          onChange={(e) => setGenreFilter(e.target.value)}
+        >
+          <option value="">All Genres</option>
+          {uniqueGenres.map((g, i) => (
+            <option key={i} value={g}>
+              {g}
+            </option>
           ))}
-        </div>
+        </select>
       </div>
+
+      {filtered.length === 0 ? (
+        <p>No results found.</p>
+      ) : (
+        <ul className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {filtered.map((novel) => (
+            <li key={novel.id} className="border p-4 rounded shadow">
+              <Link href={`/novels/${novel.id}`}>
+                <div className="font-semibold text-lg">{novel.title}</div>
+                <div className="text-sm text-gray-600 mt-1">
+                  {novel.genres?.join(", ")}
+                </div>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
     </main>
   );
 }
