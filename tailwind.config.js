@@ -1,5 +1,7 @@
-module.exports = {
-  darkMode: "class", // enable class-based dark mode
+import type { Config } from "tailwindcss";
+
+const config: Config = {
+  darkMode: "class", // Enable dark mode support
   content: [
     "./src/**/*.{js,ts,jsx,tsx,mdx}",
   ],
@@ -8,3 +10,5 @@ module.exports = {
   },
   plugins: [],
 };
+
+export default config;
