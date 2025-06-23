@@ -1,46 +1,30 @@
-import { getAuthSession } from "@/lib/auth";
-import { db } from "@/lib/firebase";
-import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
-import Link from "next/link";
+'use client';
 
-export default async function DashboardPage() {
-  const session = await getAuthSession();
+import { useEffect, useState } from 'react';
+import { auth } from '@/lib/firebase';
+import { useRouter } from 'next/navigation';
 
-  if (!session?.user?.uid) {
-    return (
-      <main className="p-6 max-w-xl mx-auto">
-        <p>Please <Link href="/login" className="underline">log in</Link> to view your dashboard.</p>
-      </main>
-    );
-  }
+export default function DashboardPage() {
+  const router = useRouter();
+  const [user, setUser] = useState<any>(null);
 
-  const q = query(
-    collection(db, "bookmarks"),
-    where("userId", "==", session.user.uid),
-    orderBy("timestamp", "desc")
-  );
-  const snap = await getDocs(q);
-  const bookmarks = snap.docs.map((doc) => doc.data());
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((firebaseUser) => {
+      if (!firebaseUser) {
+        router.push('/login');
+      } else {
+        setUser(firebaseUser);
+      }
+    });
+    return () => unsubscribe();
+  }, [router]);
+
+  if (!user) return <p>Loading...</p>;
 
   return (
-    <main className="p-6 max-w-xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">📌 Your Bookmarks</h1>
-      {bookmarks.length === 0 ? (
-        <p>You haven’t bookmarked anything yet.</p>
-      ) : (
-        <ul className="space-y-3">
-          {bookmarks.map((bm, idx) => (
-            <li key={idx}>
-              <Link
-                href={`/novels/${bm.novelId}/chapter/${bm.chapterId}`}
-                className="block p-3 bg-white border rounded shadow hover:bg-gray-100"
-              >
-                📖 Novel: {bm.novelId} — Chapter: {bm.chapterId}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      )}
-    </main>
+    <div>
+      <h1 className="text-2xl font-bold mb-4">Welcome, {user.email}</h1>
+      <p>Your dashboard content goes here.</p>
+    </div>
   );
 }
