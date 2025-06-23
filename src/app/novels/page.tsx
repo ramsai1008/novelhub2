@@ -2,9 +2,18 @@ import { getAllNovels } from "@/lib/firebase";
 import Link from "next/link";
 
 export default async function NovelsPage() {
+  const [searchQuery, setSearchQuery] = useState("");
   const novels = await getAllNovels();
 
   return (
+    <input
+  type="text"
+  placeholder="Search novels..."
+  value={searchQuery}
+  onChange={(e) => setSearchQuery(e.target.value)}
+  className="w-full md:w-1/2 p-2 border rounded mb-4 dark:bg-gray-800 dark:text-white"
+/>
+
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">📚 All Novels</h1>
 

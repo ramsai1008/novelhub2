@@ -4,9 +4,18 @@ import Card from "@/components/Card";
 import { getFeaturedNovels } from "@/lib/firebase";
 
 export default async function HomePage() {
+  const [searchQuery, setSearchQuery] = useState("");
   const featuredNovels = await getFeaturedNovels();
 
   return (
+    <input
+  type="text"
+  placeholder="Search novels..."
+  value={searchQuery}
+  onChange={(e) => setSearchQuery(e.target.value)}
+  className="w-full md:w-1/2 p-2 border rounded mb-4 dark:bg-gray-800 dark:text-white"
+/>
+
     <main className="p-4">
       <h1 className="text-2xl font-bold mb-4 text-black dark:text-white">Featured Novels</h1>
 
