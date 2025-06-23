@@ -1,62 +1,36 @@
-'use client';
-
-import './globals.css';
-import { Inter } from 'next/font/google';
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import { onAuthStateChanged, User } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
-import SignOutButton from '@/components/SignOutButton';
+import "./globals.css";
+import Link from "next/link";
+import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/context/ThemeContext";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+const inter = Inter({ subsets: ["latin"] });
+
+export const metadata = {
+  title: "NovelHub",
+  description: "A novel reading website",
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
-      <body className="bg-white dark:bg-black text-black dark:text-white transition-colors">
+      <body className={`${inter.className} bg-white dark:bg-black text-black dark:text-white transition-colors`}>
         <ThemeProvider>
-          {children}
+          <nav className="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
+            <div className="space-x-4">
+              <Link href="/" className="hover:underline">Home</Link>
+              <Link href="/bookmarks" className="hover:underline">Bookmarks</Link>
+              <Link href="/dashboard" className="hover:underline">Dashboard</Link>
+              <Link href="/admin" className="hover:underline">Admin</Link>
+            </div>
+            <ThemeToggle />
+          </nav>
+          <main className="p-4">{children}</main>
         </ThemeProvider>
-      </body>
-    </html>
-  );
-}
-const inter = Inter({ subsets: ['latin'] });
-
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, setUser);
-    return () => unsubscribe();
-  }, []);
-
-  return (
-    <html lang="en">
-      <body className={inter.className}>
-        <nav className="flex justify-between items-center p-4 bg-gray-100">
-          <div className="text-xl font-bold">
-            <Link href="/">NovelHub</Link>
-          </div>
-          <div className="space-x-4 flex items-center">
-            {user && (
-              <>
-                <Link href="/bookmarks" className="text-blue-600 hover:underline">
-                  Bookmarks
-                </Link>
-                <span className="text-sm text-gray-700">
-                  {user.displayName || user.email}
-                </span>
-                <SignOutButton />
-              </>
-            )}
-            {!user && (
-              <Link href="/login" className="text-blue-600 hover:underline">
-                Sign In
-              </Link>
-            )}
-          </div>
-        </nav>
-        <main className="p-4">{children}</main>
       </body>
     </html>
   );
