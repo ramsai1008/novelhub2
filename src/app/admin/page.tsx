@@ -24,6 +24,9 @@ export default function AdminPage() {
   const [content, setContent] = useState('');
   const [chapterNumber, setChapterNumber] = useState(1);
   const [chapters, setChapters] = useState([]);
+  const [editingChapterId, setEditingChapterId] = useState<string | null>(null);
+const [editingChapter, setEditingChapter] = useState<any>(null);
+
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
