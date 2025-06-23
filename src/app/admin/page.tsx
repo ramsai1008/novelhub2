@@ -1,85 +1,94 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { auth } from '@/lib/firebase';
-import { onAuthStateChanged } from 'firebase/auth';
-import { useRouter } from 'next/navigation';
 import { db } from '@/lib/firebase';
-import { collection, addDoc, getDocs } from 'firebase/firestore';
+import { addDoc, collection, getDocs } from 'firebase/firestore';
+import { useAuth } from '@/lib/auth';
+import { useRouter } from 'next/navigation';
 
 export default function AdminPage() {
+  const { user } = useAuth();
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const adminEmail = 'youremail@example.com'; // 🔐 Replace with your admin email
+
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [coverImage, setCoverImage] = useState('');
-  const [featured, setFeatured] = useState(false);
+  const [image, setImage] = useState('');
   const [novels, setNovels] = useState<any[]>([]);
 
-  // 🔐 Step 1: Check Admin Access
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (!user || user.email !== 'ramsai0014@gmail.com') {
-        router.push('/');
-      } else {
-        setUser(user);
-      }
-      setLoading(false);
-    });
+  // Chapter states
+  const [selectedNovel, setSelectedNovel] = useState('');
+  const [chapterTitle, setChapterTitle] = useState('');
+  const [chapterContent, setChapterContent] = useState('');
+  const [chapterNumber, setChapterNumber] = useState<number>(1);
 
-    return () => unsubscribe();
-  }, [router]);
-
-  // ✅ Step 2: Fetch existing novels
   useEffect(() => {
+    if (!user) return;
+
+    // 🔐 Redirect non-admins
+    if (user.email !== adminEmail) {
+      alert('Access denied');
+      router.push('/');
+    }
+
+    // Fetch all novels
     const fetchNovels = async () => {
-      const snapshot = await getDocs(collection(db, 'novels'));
-      const list = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      setNovels(list);
+      const snap = await getDocs(collection(db, 'novels'));
+      setNovels(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     };
 
-    if (user) fetchNovels();
+    fetchNovels();
   }, [user]);
 
-  const handleSubmit = async (e: any) => {
+  const handleNovelSubmit = async (e: any) => {
     e.preventDefault();
-    if (!title || !description || !coverImage) return;
+    if (!title || !description || !image) return;
 
     await addDoc(collection(db, 'novels'), {
       title,
       description,
-      coverImage,
-      featured,
+      image,
       createdAt: Date.now(),
     });
 
     setTitle('');
     setDescription('');
-    setCoverImage('');
-    setFeatured(false);
-
-    // Refresh novel list
-    const snapshot = await getDocs(collection(db, 'novels'));
-    const list = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-    setNovels(list);
+    setImage('');
+    alert('Novel added!');
   };
 
-  if (loading) return <p>Loading...</p>;
+  const handleChapterSubmit = async (e: any) => {
+    e.preventDefault();
+    if (!selectedNovel || !chapterTitle || !chapterContent || !chapterNumber) return;
+
+    await addDoc(collection(db, 'novels', selectedNovel, 'chapters'), {
+      title: chapterTitle,
+      content: chapterContent,
+      number: chapterNumber,
+      createdAt: Date.now(),
+    });
+
+    setChapterTitle('');
+    setChapterContent('');
+    setChapterNumber(1);
+    alert('Chapter added!');
+  };
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4">Admin Panel – Add Novel</h1>
+    <main className="max-w-3xl mx-auto p-6">
+      <h1 className="text-2xl font-bold mb-6">Admin Panel</h1>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      {/* 🔹 Novel Form */}
+      <form onSubmit={handleNovelSubmit} className="space-y-4 mb-10">
         <input
           type="text"
-          placeholder="Title"
+          placeholder="Novel Title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           className="w-full p-2 border rounded"
         />
-        <textarea
+        <input
+          type="text"
           placeholder="Description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
@@ -88,33 +97,72 @@ export default function AdminPage() {
         <input
           type="text"
           placeholder="Cover Image URL"
-          value={coverImage}
-          onChange={(e) => setCoverImage(e.target.value)}
+          value={image}
+          onChange={(e) => setImage(e.target.value)}
           className="w-full p-2 border rounded"
         />
-        <label className="flex items-center space-x-2">
-          <input
-            type="checkbox"
-            checked={featured}
-            onChange={(e) => setFeatured(e.target.checked)}
-          />
-          <span>Featured</span>
-        </label>
         <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
           Add Novel
         </button>
       </form>
 
-      {/* 📦 List of Novels */}
-      <h2 className="text-xl font-semibold mt-8 mb-2">Existing Novels</h2>
-      <ul className="space-y-2">
-        {novels.map((novel) => (
-          <li key={novel.id} className="border p-2 rounded">
-            <p className="font-bold">{novel.title}</p>
-            <p className="text-sm text-gray-600">{novel.description}</p>
-          </li>
-        ))}
-      </ul>
-    </div>
+      {/* 🔹 Novel List */}
+      <div className="mb-10">
+        <h2 className="text-xl font-semibold mb-2">Novels</h2>
+        <ul className="list-disc pl-5 space-y-1">
+          {novels.map((novel) => (
+            <li key={novel.id}>
+              {novel.title}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* 🔹 Chapter Upload Form */}
+      <hr className="my-8" />
+      <h2 className="text-xl font-semibold mb-4">Add Chapter</h2>
+
+      <form onSubmit={handleChapterSubmit} className="space-y-4 bg-gray-50 p-4 rounded border">
+        <select
+          value={selectedNovel}
+          onChange={(e) => setSelectedNovel(e.target.value)}
+          className="w-full p-2 border rounded"
+        >
+          <option value="">Select Novel</option>
+          {novels.map((novel) => (
+            <option key={novel.id} value={novel.id}>
+              {novel.title}
+            </option>
+          ))}
+        </select>
+
+        <input
+          type="text"
+          placeholder="Chapter Title"
+          value={chapterTitle}
+          onChange={(e) => setChapterTitle(e.target.value)}
+          className="w-full p-2 border rounded"
+        />
+
+        <input
+          type="number"
+          placeholder="Chapter Number"
+          value={chapterNumber}
+          onChange={(e) => setChapterNumber(Number(e.target.value))}
+          className="w-full p-2 border rounded"
+        />
+
+        <textarea
+          placeholder="Chapter Content"
+          value={chapterContent}
+          onChange={(e) => setChapterContent(e.target.value)}
+          className="w-full p-2 border rounded h-32"
+        />
+
+        <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded">
+          Add Chapter
+        </button>
+      </form>
+    </main>
   );
 }
