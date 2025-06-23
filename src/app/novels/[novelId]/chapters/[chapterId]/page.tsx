@@ -1,78 +1,62 @@
 import { db } from "@/lib/firebase";
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  where,
-  orderBy,
-} from "firebase/firestore";
-import { auth } from "@/lib/firebase";
-import { getAuthSession } from "@/lib/auth"; // If using Firebase Auth session utility
-import { BookmarkButton } from "@/components/BookmarkButton"; // Optional bookmark component
+import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
 import Link from "next/link";
 
-export default async function ChapterPage({
-  params,
-}: {
-  params: { novelId: string; chapterId: string };
-}) {
+interface Params {
+  params: {
+    novelId: string;
+    chapterId: string;
+  };
+}
+
+export default async function ChapterPage({ params }: Params) {
   const { novelId, chapterId } = params;
 
-  const chapterRef = doc(db, "chapters", chapterId);
-  const chapterSnap = await getDoc(chapterRef);
+  // Fetch current chapter
+  const docRef = doc(db, "chapters", chapterId);
+  const docSnap = await getDoc(docRef);
 
-  if (!chapterSnap.exists()) {
-    return <div className="p-6 text-red-500">❌ Chapter not found</div>;
+  if (!docSnap.exists()) {
+    return <div className="p-4 text-red-600">Chapter not found.</div>;
   }
 
-  const chapter = { id: chapterSnap.id, ...chapterSnap.data() };
+  const chapter = docSnap.data();
+  const currentOrder = chapter.order;
 
-  // Fetch all chapters to get previous/next links
-  const chapterQuery = query(
-    collection(db, "chapters"),
-    where("novelId", "==", novelId),
-    orderBy("number")
-  );
-  const chapterSnapAll = await getDocs(chapterQuery);
-  const chapters = chapterSnapAll.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  }));
+  // Fetch all chapters of this novel, ordered by 'order'
+  const chaptersRef = collection(db, "chapters");
+  const q = query(chaptersRef, where("novelId", "==", novelId));
+  const chaptersSnap = await getDocs(q);
+  const chapters = chaptersSnap.docs
+    .map((doc) => ({ id: doc.id, ...doc.data() }))
+    .sort((a: any, b: any) => a.order - b.order);
 
-  const currentIndex = chapters.findIndex((c) => c.id === chapterId);
+  const currentIndex = chapters.findIndex((ch: any) => ch.id === chapterId);
   const prevChapter = chapters[currentIndex - 1];
   const nextChapter = chapters[currentIndex + 1];
 
   return (
-    <div className="max-w-3xl mx-auto p-6">
+    <div className="max-w-3xl mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">{chapter.title}</h1>
+      <div className="prose prose-lg mb-6" dangerouslySetInnerHTML={{ __html: chapter.content }} />
 
-      <div className="mb-4 flex justify-between text-sm text-gray-500">
+      <div className="flex justify-between mt-8">
         {prevChapter ? (
-          <Link href={`/novels/${novelId}/chapter/${prevChapter.id}`}>
-            ⬅️ {prevChapter.title}
+          <Link
+            className="text-blue-600 hover:underline"
+            href={`/novels/${novelId}/chapter/${prevChapter.id}`}
+          >
+            ← {prevChapter.title}
           </Link>
-        ) : (
-          <span></span>
-        )}
+        ) : <div />}
         {nextChapter ? (
-          <Link href={`/novels/${novelId}/chapter/${nextChapter.id}`}>
-            {nextChapter.title} ➡️
+          <Link
+            className="text-blue-600 hover:underline ml-auto"
+            href={`/novels/${novelId}/chapter/${nextChapter.id}`}
+          >
+            {nextChapter.title} →
           </Link>
-        ) : (
-          <span></span>
-        )}
-      </div>
-
-      <div className="prose prose-sm max-w-none whitespace-pre-wrap">
-        {chapter.content}
-      </div>
-
-      {/* Optional Bookmark Button */}
-      <div className="mt-6">
-        <BookmarkButton chapterId={chapterId} novelId={novelId} />
+        ) : <div />}
       </div>
     </div>
   );
