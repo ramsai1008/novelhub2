@@ -90,4 +90,19 @@ export default function AdminPage() {
       </form>
     </div>
   );
+import { collection, getDocs } from 'firebase/firestore';
+
+// Add this to your useState block
+const [novels, setNovels] = useState<any[]>([]);
+
+// Fetch novels on load (after auth check)
+useEffect(() => {
+  const fetchNovels = async () => {
+    const snapshot = await getDocs(collection(db, 'novels'));
+    const list = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    setNovels(list);
+  };
+
+  if (user) fetchNovels();
+}, [user]);
 }
