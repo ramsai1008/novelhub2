@@ -1,6 +1,23 @@
 import Link from "next/link";
 import { getFeaturedNovels } from "@/lib/firebase";
+import Card from "@/components/Card";
 
+export default function HomePage() {
+  return (
+    <main className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+      <Card title="Featured Novel" description="Explore the top-rated fantasy novel.">
+        <button className="mt-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white py-2 px-4 rounded">
+          Read Now
+        </button>
+      </Card>
+
+      <Card title="New Release" description="Just dropped this week.">
+        <button className="mt-2 bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white py-2 px-4 rounded">
+          Start Reading
+        </button>
+      </Card>
+    </main>
+  );
 export default async function HomePage() {
   const featuredNovels = await getFeaturedNovels();
 
