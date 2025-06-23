@@ -1,36 +1,20 @@
-'use client';
-
-import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, User } from 'firebase/auth';
+// src/lib/auth.ts
+import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from './firebase';
-import { useEffect, useState } from 'react';
 
-// Custom hook to get current user
-export function useAuthUser() {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+let currentUser: User | null = null;
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      setLoading(false);
-    });
-    return () => unsubscribe();
-  }, []);
-
-  return { user, loading };
+export function initAuth(callback?: (user: User | null) => void) {
+  onAuthStateChanged(auth, (user) => {
+    currentUser = user;
+    if (callback) callback(user);
+  });
 }
 
-// Login function
-export async function login(email: string, password: string) {
-  return signInWithEmailAndPassword(auth, email, password);
+export function getCurrentUser(): User | null {
+  return currentUser;
 }
 
-// Register function
-export async function register(email: string, password: string) {
-  return createUserWithEmailAndPassword(auth, email, password);
-}
-
-// Logout function
-export async function logout() {
-  return signOut(auth);
+export function isLoggedIn(): boolean {
+  return currentUser !== null;
 }

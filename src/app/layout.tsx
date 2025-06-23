@@ -1,43 +1,37 @@
-import "./globals.css";
-import Link from "next/link";
-import { Inter } from "next/font/google";
-import { getAuthSession } from "@/lib/auth";
-import LogoutButton from "@/components/LogoutButton"; // We'll add this next
+import './globals.css';
+import { Inter } from 'next/font/google';
+import Link from 'next/link';
+import { initAuth } from '@/lib/auth';
+import { useEffect } from 'react';
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
-  title: "NovelHub",
-  description: "Read novels and bookmark your progress",
+  title: 'NovelHub',
+  description: 'Read your favorite novels online',
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getAuthSession();
+  useEffect(() => {
+    initAuth(); // Initializes auth listener on app load
+  }, []);
 
   return (
     <html lang="en">
       <body className={inter.className}>
-        <header className="bg-gray-800 text-white p-4">
-          <nav className="flex gap-4 max-w-5xl mx-auto">
-            <Link href="/" className="hover:underline">🏠 Home</Link>
-            <Link href="/novels" className="hover:underline">📚 Novels</Link>
-            <Link href="/bookmarks" className="hover:underline">🔖 Bookmarks</Link>
-
-            {session?.user ? (
-              <>
-                <span className="ml-auto">👤 {session.user.name || session.user.email}</span>
-                <LogoutButton />
-              </>
-            ) : (
-              <Link href="/login" className="ml-auto hover:underline">🔐 Login</Link>
-            )}
+        <header className="p-4 bg-gray-900 text-white flex justify-between">
+          <Link href="/" className="font-bold text-xl">NovelHub</Link>
+          <nav className="space-x-4">
+            <Link href="/bookmarks">Bookmarks</Link>
+            <Link href="/dashboard">Dashboard</Link>
+            <Link href="/login">Login</Link>
           </nav>
         </header>
-        <main className="max-w-5xl mx-auto p-6">{children}</main>
+        <main className="p-4">{children}</main>
       </body>
     </html>
   );

@@ -13,10 +13,10 @@ const firebaseConfig = {
   appId: "1:208383799577:web:ca27cea78d7588d73e9588"
 };
 
-// Initialize Firebase
+// Initialize Firebase app (singleton pattern)
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-export { auth, db };
+// Export initialized Firebase services
+export const auth = getAuth(app);
+export const firestore = getFirestore(app);
+export const storage = getStorage(app);
