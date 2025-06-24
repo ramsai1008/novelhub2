@@ -7,6 +7,7 @@ export type Novel = {
   tags?: string[]
   featured?: boolean
   createdAt?: number
+  status?: 'Ongoing' | 'Completed'
 }
 
 export type Chapter = {
