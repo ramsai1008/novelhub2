@@ -13,6 +13,27 @@ const firebaseConfig = {
   appId: "1:208383799577:web:ca27cea78d7588d73e9588"
 };
 
-const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
+export const db = getFirestore(app);
+export const auth = getAuth(app);
 
-export default app;
+export const addChapter = async (novelId: string, title: string, content: string) => {
+  const chaptersRef = collection(db, "novels", novelId, "chapters");
+  await addDoc(chaptersRef, { title, content, createdAt: Date.now() });
+};
+
+export const getChapters = async (novelId: string) => {
+  const chaptersRef = collection(db, "novels", novelId, "chapters");
+  const snapshot = await getDocs(chaptersRef);
+  return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+};
+
+export const deleteChapter = async (novelId: string, chapterId: string) => {
+  const chapterRef = doc(db, "novels", novelId, "chapters", chapterId);
+  await deleteDoc(chapterRef);
+};
+
+export const updateChapter = async (novelId: string, chapterId: string, updatedData: { title?: string; content?: string }) => {
+  const chapterRef = doc(db, "novels", novelId, "chapters", chapterId);
+  await updateDoc(chapterRef, updatedData);
+};
