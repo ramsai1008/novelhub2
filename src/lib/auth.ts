@@ -1,20 +1,35 @@
 // src/lib/auth.ts
-import { onAuthStateChanged, User } from 'firebase/auth';
-import { auth } from './firebase';
+import app from './firebase';
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signOut,
+  onAuthStateChanged,
+  User,
+} from 'firebase/auth';
 
-let currentUser: User | null = null;
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
 
-export function initAuth(callback?: (user: User | null) => void) {
-  onAuthStateChanged(auth, (user) => {
-    currentUser = user;
-    if (callback) callback(user);
-  });
-}
+export const loginWithGoogle = async () => {
+  try {
+    await signInWithPopup(auth, provider);
+  } catch (error) {
+    console.error('Google login failed:', error);
+  }
+};
 
-export function getCurrentUser(): User | null {
-  return currentUser;
-}
+export const logout = async () => {
+  try {
+    await signOut(auth);
+  } catch (error) {
+    console.error('Logout failed:', error);
+  }
+};
 
-export function isLoggedIn(): boolean {
-  return currentUser !== null;
-}
+export const subscribeToAuthChanges = (callback: (user: User | null) => void) => {
+  return onAuthStateChanged(auth, callback);
+};
+
+export { auth };
