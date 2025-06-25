@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { auth } from 'src/lib/firebase';
+import { auth } from '../../lib/firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
-import { getBookmarksForUser } from 'src/lib/firestore';
+import { getBookmarksForUser } from '../../lib/firestore';
 import { Novel } from '../../types';
 
 type Bookmark = Novel & { timestamp?: number };
