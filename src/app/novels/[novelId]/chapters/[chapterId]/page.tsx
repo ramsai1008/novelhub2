@@ -8,8 +8,16 @@ export async function generateMetadata({ params }: { params: { novelId: string; 
   return { title: `Chapter ${params.chapterId}` };
 }
 
-export default async function Page({ params }: { params: { novelId: string; chapterId: string } }) {
+type PageProps = {
+  params: {
+    novelId: string;
+    chapterId: string;
+  };
+};
+
+export default async function Page({ params }: PageProps) {
   const { novelId, chapterId } = params;
+
 
   // Fetch current chapter
   const docRef = doc(db, "novels", novelId, "chapters", chapterId);
