@@ -2,12 +2,6 @@ import { db } from '@/lib/firebase';
 import { doc, getDoc, collection, query, getDocs, orderBy } from "firebase/firestore";
 import Link from "next/link";
 
-interface Params {
-  params: {
-    novelId: string;
-    chapterId: string;
-  };
-}
 type PageProps = {
   params: {
     novelId: string;
@@ -17,8 +11,6 @@ type PageProps = {
 
 export default async function Page({ params }: PageProps) {
   const { novelId, chapterId } = params;
-  // your code here
-
 
   // Fetch current chapter
   const docRef = doc(db, "novels", novelId, "chapters", chapterId);
