@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { auth } from '@/lib/firebase';
+import { auth } from 'src/lib/firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
-import { getBookmarksForUser } from '@/lib/firestore';
+import { getBookmarksForUser } from 'src/lib/firestore';
 
 export default function BookmarksPage() {
   const [user, setUser] = useState<User | null>(null);
