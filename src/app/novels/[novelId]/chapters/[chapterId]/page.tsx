@@ -1,15 +1,14 @@
 import { db } from '@/lib/firebase';
 import { doc, getDoc, collection, query, getDocs, orderBy } from "firebase/firestore";
 import Link from "next/link";
+import { Metadata } from 'next';
 
-type PageProps = {
-  params: {
-    novelId: string;
-    chapterId: string;
-  };
-};
+export async function generateMetadata({ params }: { params: { novelId: string; chapterId: string } }): Promise<Metadata> {
+  // Optionally fetch and return metadata for SEO
+  return { title: `Chapter ${params.chapterId}` };
+}
 
-export default async function Page({ params }: PageProps) {
+export default async function Page({ params }: { params: { novelId: string; chapterId: string } }) {
   const { novelId, chapterId } = params;
 
   // Fetch current chapter
