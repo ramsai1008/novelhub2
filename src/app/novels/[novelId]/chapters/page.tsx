@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getChaptersByNovelId } from "@/lib/firestore";
+import { getChapters } from "@/lib/firebase";
 import { notFound } from "next/navigation";
 
 type PageProps = {
@@ -11,7 +11,7 @@ type PageProps = {
 export default async function ChaptersPage({ params }: PageProps) {
   const { novelId } = params;
 
-  const chapters = await getChaptersByNovelId(novelId);
+  const chapters = await getChapters(novelId);
 
   if (!chapters) return notFound();
 
