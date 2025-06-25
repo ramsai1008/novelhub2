@@ -2,14 +2,14 @@ import { getChapterById } from "@/lib/firestore";
 import { notFound } from "next/navigation";
 
 type PageProps = {
-  params: {
+  params: Promise<{
     novelId: string;
     chapterId: string;
-  };
+  }>;
 };
 
 export default async function ChapterPage({ params }: PageProps) {
-  const { novelId, chapterId } = params;
+  const { novelId, chapterId } = await params;
 
   const chapter = await getChapterById(novelId, chapterId);
 

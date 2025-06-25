@@ -3,13 +3,13 @@ import { getChapters } from "@/lib/firebase";
 import { notFound } from "next/navigation";
 
 type PageProps = {
-  params: {
+  params: Promise<{
     novelId: string;
-  };
+  }>;
 };
 
 export default async function ChaptersPage({ params }: PageProps) {
-  const { novelId } = params;
+  const { novelId } = await params;
 
   const chapters = await getChapters(novelId);
 

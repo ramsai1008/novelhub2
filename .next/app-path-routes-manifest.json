@@ -1,0 +1,12 @@
+{
+  "/_not-found/page": "/_not-found",
+  "/admin/page": "/admin",
+  "/bookmarks/page": "/bookmarks",
+  "/dashboard/page": "/dashboard",
+  "/login/page": "/login",
+  "/novels/[novelId]/chapters/[chapterId]/page": "/novels/[novelId]/chapters/[chapterId]",
+  "/novels/[novelId]/chapters/page": "/novels/[novelId]/chapters",
+  "/novels/[novelId]/page": "/novels/[novelId]",
+  "/page": "/",
+  "/novels/page": "/novels"
+}

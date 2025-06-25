@@ -2,10 +2,10 @@ import { db } from '@/lib/firebase';
 import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import Link from "next/link";
 
-interface Params {
-  params: {
+interface PageProps {
+  params: Promise<{
     novelId: string;
-  };
+  }>;
 }
 
 interface Chapter {
@@ -14,8 +14,8 @@ interface Chapter {
   createdAt: number;
 }
 
-export default async function NovelPage({ params }: Params) {
-  const { novelId } = params;
+export default async function NovelPage({ params }: PageProps) {
+  const { novelId } = await params;
 
   // Fetch chapters for this novel
   const chapters: Chapter[] = [];
