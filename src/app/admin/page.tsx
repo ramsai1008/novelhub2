@@ -11,7 +11,7 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { db, auth } from "src/lib/firebase";
+import { db, auth } from "../lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 
@@ -47,8 +47,8 @@ export default function AdminPage() {
   };
 
   const fetchChapters = async (novelId) => {
-    const q = query(collection(db, "chapters"), where("novelId", "==", novelId));
-    const snapshot = await getDocs(q);
+    const chaptersRef = collection(db, "novels", novelId, "chapters");
+    const snapshot = await getDocs(chaptersRef);
     const chaptersData = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
     setChapters(chaptersData);
   };
@@ -75,13 +75,12 @@ export default function AdminPage() {
     };
 
     if (editingChapterId) {
-      await updateDoc(doc(db, "chapters", editingChapterId), chapterData);
+      await updateDoc(doc(db, "novels", selectedNovelId, "chapters", editingChapterId), chapterData);
       setEditingChapterId(null);
       setEditingChapter(null);
     } else {
-      await addDoc(collection(db, "chapters"), {
+      await addDoc(collection(db, "novels", selectedNovelId, "chapters"), {
         ...chapterData,
-        novelId: selectedNovelId,
         createdAt: Date.now(),
       });
     }
@@ -93,7 +92,7 @@ export default function AdminPage() {
   };
 
   const deleteChapter = async (id) => {
-    await deleteDoc(doc(db, "chapters", id));
+    await deleteDoc(doc(db, "novels", selectedNovelId, "chapters", id));
     fetchChapters(selectedNovelId);
   };
 

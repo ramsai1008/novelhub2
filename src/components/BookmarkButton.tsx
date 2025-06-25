@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { doc, setDoc, getDoc, deleteDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
-import { useAuth } from "@/lib/useAuth"; // your custom hook for auth context
+import { db } from "../lib/firebase";
+import { useAuth } from "../lib/useAuth"; // your custom hook for auth context
 
 interface Props {
   novelId: string;

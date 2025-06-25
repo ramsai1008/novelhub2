@@ -5,10 +5,13 @@ import { auth } from 'src/lib/firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { getBookmarksForUser } from 'src/lib/firestore';
+import { Novel } from '../../types';
+
+type Bookmark = Novel & { timestamp?: number };
 
 export default function BookmarksPage() {
   const [user, setUser] = useState<User | null>(null);
-  const [bookmarks, setBookmarks] = useState<any[]>([]);
+  const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -37,7 +40,9 @@ export default function BookmarksPage() {
           {bookmarks.map((bookmark) => (
             <li key={bookmark.id} className="p-3 border rounded shadow-sm">
               <p className="font-semibold">{bookmark.title}</p>
-              <p className="text-sm text-gray-600">Last read: {new Date(bookmark.timestamp).toLocaleString()}</p>
+              <p className="text-sm text-gray-600">
+                Last read: {bookmark.timestamp ? new Date(bookmark.timestamp).toLocaleString() : 'Unknown'}
+              </p>
             </li>
           ))}
         </ul>

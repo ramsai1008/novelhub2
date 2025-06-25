@@ -1,5 +1,5 @@
 import { db } from "@/lib/firebase";
-import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
+import { doc, getDoc, collection, query, getDocs, orderBy } from "firebase/firestore";
 import Link from "next/link";
 
 interface Params {
@@ -13,7 +13,7 @@ export default async function ChapterPage({ params }: Params) {
   const { novelId, chapterId } = params;
 
   // Fetch current chapter
-  const docRef = doc(db, "chapters", chapterId);
+  const docRef = doc(db, "novels", novelId, "chapters", chapterId);
   const docSnap = await getDoc(docRef);
 
   if (!docSnap.exists()) {
@@ -24,8 +24,8 @@ export default async function ChapterPage({ params }: Params) {
   const currentOrder = chapter.order;
 
   // Fetch all chapters of this novel, ordered by 'order'
-  const chaptersRef = collection(db, "chapters");
-  const q = query(chaptersRef, where("novelId", "==", novelId));
+  const chaptersRef = collection(db, "novels", novelId, "chapters");
+  const q = query(chaptersRef, orderBy("order", "asc"));
   const chaptersSnap = await getDocs(q);
   const chapters = chaptersSnap.docs
     .map((doc) => ({ id: doc.id, ...doc.data() }))

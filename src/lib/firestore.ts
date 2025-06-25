@@ -1,7 +1,6 @@
 // src/lib/firestore.ts
-import app from './firebase';
+import { db } from './firebase';
 import {
-  getFirestore,
   collection,
   getDocs,
   getDoc,
@@ -14,8 +13,6 @@ import {
   deleteDoc,
   Timestamp,
 } from 'firebase/firestore';
-
-const db = getFirestore(app);
 
 // Re-export commonly used firestore helpers
 export {

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Novel } from '@/types'
+import { Novel } from '../types'
 
 export default function NovelCard({ novel }: { novel: Novel }) {
   return (

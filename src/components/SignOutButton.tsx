@@ -1,20 +1,24 @@
 'use client';
 
-import { auth } from '@/lib/firebase';
+import { auth } from '../lib/firebase';
+import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
 
 export default function SignOutButton() {
   const router = useRouter();
 
   const handleSignOut = async () => {
-    await auth.signOut();
+    await signOut(auth);
     router.push('/login');
   };
 
   return (
-    <Button variant="outline" onClick={handleSignOut}>
+    <button
+      type="button"
+      onClick={handleSignOut}
+      className="px-4 py-2 border rounded bg-white dark:bg-zinc-900 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-zinc-800 transition"
+    >
       Sign Out
-    </Button>
+    </button>
   );
 }

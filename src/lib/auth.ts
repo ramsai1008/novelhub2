@@ -1,7 +1,6 @@
 // src/lib/auth.ts
-import app from './firebase';
+import { auth } from './firebase';
 import {
-  getAuth,
   GoogleAuthProvider,
   signInWithPopup,
   signOut,
@@ -9,10 +8,9 @@ import {
   User,
 } from 'firebase/auth';
 
-const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-export const loginWithGoogle = async () => {
+export const loginWithGoogle = async (): Promise<void> => {
   try {
     await signInWithPopup(auth, provider);
   } catch (error) {
@@ -20,7 +18,7 @@ export const loginWithGoogle = async () => {
   }
 };
 
-export const logout = async () => {
+export const logout = async (): Promise<void> => {
   try {
     await signOut(auth);
   } catch (error) {

@@ -1,5 +1,5 @@
-import { db } from "@/lib/firebase";
-import { collection, getDocs, query, where, orderBy } from "firebase/firestore";
+import { db } from "../../../lib/firebase";
+import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import Link from "next/link";
 
 interface Params {
@@ -20,12 +20,8 @@ export default async function NovelPage({ params }: Params) {
   // Fetch chapters for this novel
   const chapters: Chapter[] = [];
 
-  const chaptersRef = collection(db, "chapters");
-  const q = query(
-    chaptersRef,
-    where("novelId", "==", novelId),
-    orderBy("createdAt", "asc")
-  );
+  const chaptersRef = collection(db, "novels", novelId, "chapters");
+  const q = query(chaptersRef, orderBy("createdAt", "asc"));
 
   const snapshot = await getDocs(q);
   snapshot.forEach((doc) => {
@@ -40,18 +36,22 @@ export default async function NovelPage({ params }: Params) {
   return (
     <div className="max-w-3xl mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Chapters</h1>
-      <ul className="space-y-2">
-        {chapters.map((chapter) => (
-          <li key={chapter.id}>
-            <Link
-              href={`/novels/${novelId}/chapter/${chapter.id}`}
-              className="text-blue-600 hover:underline"
-            >
-              {chapter.title}
-            </Link>
-          </li>
-        ))}
-      </ul>
+      {chapters.length === 0 ? (
+        <p className="text-gray-500">No chapters found.</p>
+      ) : (
+        <ul className="space-y-2">
+          {chapters.map((chapter) => (
+            <li key={chapter.id}>
+              <Link
+                href={`/novels/${novelId}/chapter/${chapter.id}`}
+                className="text-blue-600 hover:underline"
+              >
+                {chapter.title}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { getFeaturedNovels, getUserBookmarks } from '@/lib/firebase'
-import { useAuth } from '@/lib/auth'
-import { Novel } from '@/types'
+import { getFeaturedNovels, getUserBookmarks } from '../lib/firebase'
+import { useAuth } from '../lib/useAuth'
+import { Novel } from '../types'
 
 export default function HomePage() {
   const [novels, setNovels] = useState<Novel[]>([])
@@ -17,12 +17,12 @@ export default function HomePage() {
   useEffect(() => {
     const fetchData = async () => {
       const allNovels = await getFeaturedNovels()
-      setNovels(allNovels)
+      setNovels(allNovels as Novel[])
       setLoading(false)
 
       if (user) {
         const bookmarks = await getUserBookmarks(user.uid)
-        setBookmarked(bookmarks)
+        setBookmarked(bookmarks as Novel[])
       }
     }
 

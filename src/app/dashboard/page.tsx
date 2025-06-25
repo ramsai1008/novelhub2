@@ -1,7 +1,8 @@
 'use client';
 
+import { onAuthStateChanged } from 'firebase/auth';
 import { useEffect, useState } from 'react';
-import { auth } from 'src/lib/firebase';
+import { auth } from '../../lib/firebase';
 import { useRouter } from 'next/navigation';
 
 export default function DashboardPage() {
@@ -9,7 +10,7 @@ export default function DashboardPage() {
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((firebaseUser) => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       if (!firebaseUser) {
         router.push('/login');
       } else {

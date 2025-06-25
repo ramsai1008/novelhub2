@@ -1,8 +1,8 @@
 import "./globals.css";
 import Link from "next/link";
 import { Inter } from "next/font/google";
-import { ThemeProvider } from "@/context/ThemeContext";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { ThemeProvider } from "../context/ThemeContext";
+import { ThemeToggle } from "../components/ThemeToggle";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,7 +18,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} bg-white dark:bg-black text-black dark:text-white transition-colors`}>
+      <body className={`${inter.className} bg-white dark:bg-black text-black dark:text-white transition-colors min-h-screen`}>
         <ThemeProvider>
           <nav className="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
             <div className="space-x-4">
