@@ -28,7 +28,10 @@ export default async function ChapterPage({ params }: Params) {
   const q = query(chaptersRef, orderBy("order", "asc"));
   const chaptersSnap = await getDocs(q);
   const chapters = chaptersSnap.docs
-    .map((doc) => ({ id: doc.id, ...doc.data() }))
+    .map((doc) => {
+      const data = doc.data();
+      return { id: doc.id, title: data.title, order: data.order, ...data };
+    })
     .sort((a: any, b: any) => a.order - b.order);
 
   const currentIndex = chapters.findIndex((ch: any) => ch.id === chapterId);
