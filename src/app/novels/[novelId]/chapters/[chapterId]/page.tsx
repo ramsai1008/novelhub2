@@ -1,12 +1,5 @@
-import { db } from '@/lib/firebase';
-import { doc, getDoc, collection, query, getDocs, orderBy } from "firebase/firestore";
-import Link from "next/link";
-import { Metadata } from 'next';
-
-export async function generateMetadata({ params }: { params: { novelId: string; chapterId: string } }): Promise<Metadata> {
-  // Optionally fetch and return metadata for SEO
-  return { title: `Chapter ${params.chapterId}` };
-}
+import { getChapterById } from "@/lib/firestore";
+import { notFound } from "next/navigation";
 
 type PageProps = {
   params: {
@@ -15,59 +8,17 @@ type PageProps = {
   };
 };
 
-export default async function Page({ params }: PageProps) {
+export default async function ChapterPage({ params }: PageProps) {
   const { novelId, chapterId } = params;
 
+  const chapter = await getChapterById(novelId, chapterId);
 
-  // Fetch current chapter
-  const docRef = doc(db, "novels", novelId, "chapters", chapterId);
-  const docSnap = await getDoc(docRef);
-
-  if (!docSnap.exists()) {
-    return <div className="p-4 text-red-600">Chapter not found.</div>;
-  }
-
-  const chapter = docSnap.data();
-  const currentOrder = chapter.order;
-
-  // Fetch all chapters of this novel, ordered by 'order'
-  const chaptersRef = collection(db, "novels", novelId, "chapters");
-  const q = query(chaptersRef, orderBy("order", "asc"));
-  const chaptersSnap = await getDocs(q);
-  const chapters = chaptersSnap.docs
-    .map((doc) => {
-      const data = doc.data();
-      return { id: doc.id, title: data.title, order: data.order, ...data };
-    })
-    .sort((a: any, b: any) => a.order - b.order);
-
-  const currentIndex = chapters.findIndex((ch: any) => ch.id === chapterId);
-  const prevChapter = chapters[currentIndex - 1];
-  const nextChapter = chapters[currentIndex + 1];
+  if (!chapter) return notFound();
 
   return (
-    <div className="max-w-3xl mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">{chapter.title}</h1>
-      <div className="prose prose-lg mb-6" dangerouslySetInnerHTML={{ __html: chapter.content }} />
-
-      <div className="flex justify-between mt-8">
-        {prevChapter ? (
-          <Link
-            className="text-blue-600 hover:underline"
-            href={`/novels/${novelId}/chapters/${prevChapter.id}`}
-          >
-            ← {prevChapter.title}
-          </Link>
-        ) : <div />}
-        {nextChapter ? (
-          <Link
-            className="text-blue-600 hover:underline ml-auto"
-            href={`/novels/${novelId}/chapters/${nextChapter.id}`}
-          >
-            {nextChapter.title} →
-          </Link>
-        ) : <div />}
-      </div>
+    <div className="max-w-4xl mx-auto p-6 prose dark:prose-invert">
+      <h1 className="text-3xl font-bold mb-4">{chapter.title}</h1>
+      <div dangerouslySetInnerHTML={{ __html: chapter.content }} />
     </div>
   );
 }
