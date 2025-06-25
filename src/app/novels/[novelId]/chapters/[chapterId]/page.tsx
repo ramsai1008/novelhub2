@@ -1,4 +1,4 @@
-import { db } from '../lib/firebase';
+import { db } from '@/lib/firebase';
 import { doc, getDoc, collection, query, getDocs, orderBy } from "firebase/firestore";
 import Link from "next/link";
 
@@ -44,7 +44,7 @@ export default async function ChapterPage({ params }: Params) {
         {prevChapter ? (
           <Link
             className="text-blue-600 hover:underline"
-            href={`/novels/${novelId}/chapter/${prevChapter.id}`}
+            href={`/novels/${novelId}/chapters/${prevChapter.id}`}
           >
             ← {prevChapter.title}
           </Link>
@@ -52,7 +52,7 @@ export default async function ChapterPage({ params }: Params) {
         {nextChapter ? (
           <Link
             className="text-blue-600 hover:underline ml-auto"
-            href={`/novels/${novelId}/chapter/${nextChapter.id}`}
+            href={`/novels/${novelId}/chapters/${nextChapter.id}`}
           >
             {nextChapter.title} →
           </Link>

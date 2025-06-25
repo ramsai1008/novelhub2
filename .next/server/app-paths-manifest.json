@@ -5,7 +5,7 @@
   "/dashboard/page": "app/dashboard/page.js",
   "/login/page": "app/login/page.js",
   "/novels/[novelId]/chapters/[chapterId]/page": "app/novels/[novelId]/chapters/[chapterId]/page.js",
+  "/novels/[novelId]/page": "app/novels/[novelId]/page.js",
   "/novels/page": "app/novels/page.js",
-  "/page": "app/page.js",
-  "/novels/[novelId]/page": "app/novels/[novelId]/page.js"
+  "/page": "app/page.js"
 }
