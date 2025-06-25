@@ -8,9 +8,17 @@ interface Params {
     chapterId: string;
   };
 }
+type PageProps = {
+  params: {
+    novelId: string;
+    chapterId: string;
+  };
+};
 
-export default async function ChapterPage({ params }: Params) {
+export default async function Page({ params }: PageProps) {
   const { novelId, chapterId } = params;
+  // your code here
+
 
   // Fetch current chapter
   const docRef = doc(db, "novels", novelId, "chapters", chapterId);
