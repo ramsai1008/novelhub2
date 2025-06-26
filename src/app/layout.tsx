@@ -24,13 +24,13 @@ export default function RootLayout({
       </head>
       <body className={`${inter.className} bg-white dark:bg-black text-black dark:text-white transition-colors min-h-screen`}>
         <ThemeProvider>
-          <nav className="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
+          <nav className="p-4 bg-gradient-to-r from-blue-700 via-indigo-600 to-purple-600 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex justify-between items-center shadow-lg">
             <div className="space-x-4">
-              <Link href="/" className="hover:underline">Home</Link>
-              <Link href="/bookmarks" className="hover:underline">Bookmarks</Link>
-              <Link href="/history" className="hover:underline">History</Link>
-              <Link href="/dashboard" className="hover:underline">Dashboard</Link>
-              <Link href="/admin" className="hover:underline">Admin</Link>
+              <Link href="/" className="hover:underline text-white font-bold tracking-wide text-lg">Home</Link>
+              <Link href="/bookmarks" className="hover:underline text-white/90">Bookmarks</Link>
+              <Link href="/history" className="hover:underline text-white/90">History</Link>
+              <Link href="/dashboard" className="hover:underline text-white/90">Dashboard</Link>
+              <Link href="/admin" className="hover:underline text-white/90">Admin</Link>
             </div>
             <div className="flex items-center gap-4">
               <ThemeToggle />
