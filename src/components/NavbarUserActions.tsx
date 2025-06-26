@@ -11,7 +11,6 @@ export default function NavbarUserActions() {
   return (
     <>
       <Link href="/login" className="px-3 py-2 rounded bg-blue-600 text-white font-semibold shadow hover:bg-blue-700 transition text-sm sm:text-base">Login</Link>
-      <Link href="/register" className="px-3 py-2 rounded bg-green-600 text-white font-semibold shadow hover:bg-green-700 transition text-sm sm:text-base">Register</Link>
     </>
   );
 }
