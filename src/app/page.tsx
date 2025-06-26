@@ -110,12 +110,12 @@ export default function HomePage() {
               <div className="bg-gray-100 dark:bg-gray-800 rounded-lg h-full flex items-center justify-center min-h-[200px]">No featured novel</div>
             )}
           </div>
-          {/* 5 small slots left */}
-          <div className="sm:col-span-3 flex flex-col gap-2">
+          {/* 5 small slots left (vertical on desktop, horizontal on mobile) */}
+          <div className="sm:col-span-3 flex sm:flex-col flex-row gap-2">
             {[1,2,3,4,5].map((i) => (
               filtered[i] ? (
                 <Link key={filtered[i].id} href={`/novels/${filtered[i].id}`}> 
-                  <div className="bg-white dark:bg-gray-900 rounded shadow hover:shadow-lg transition flex items-center gap-2 p-2">
+                  <div className="bg-white dark:bg-gray-900 rounded shadow hover:shadow-lg transition flex items-center gap-2 p-2 min-w-[120px]">
                     {filtered[i].cover && <img src={filtered[i].cover} alt={filtered[i].title} className="w-12 h-16 object-cover rounded" />}
                     <div>
                       <h4 className="font-semibold text-xs sm:text-sm truncate">{filtered[i].title}</h4>
@@ -124,16 +124,16 @@ export default function HomePage() {
                   </div>
                 </Link>
               ) : (
-                <div key={i} className="bg-gray-100 dark:bg-gray-800 rounded flex items-center justify-center h-16">Empty</div>
+                <div key={i} className="bg-gray-100 dark:bg-gray-800 rounded flex items-center justify-center h-16 min-w-[120px]">Empty</div>
               )
             ))}
           </div>
-          {/* 5 small slots right */}
-          <div className="sm:col-span-3 flex flex-col gap-2">
+          {/* 5 small slots right (vertical on desktop, horizontal on mobile) */}
+          <div className="sm:col-span-3 flex sm:flex-col flex-row gap-2">
             {[6,7,8,9,10].map((i) => (
               filtered[i] ? (
                 <Link key={filtered[i].id} href={`/novels/${filtered[i].id}`}> 
-                  <div className="bg-white dark:bg-gray-900 rounded shadow hover:shadow-lg transition flex items-center gap-2 p-2">
+                  <div className="bg-white dark:bg-gray-900 rounded shadow hover:shadow-lg transition flex items-center gap-2 p-2 min-w-[120px]">
                     {filtered[i].cover && <img src={filtered[i].cover} alt={filtered[i].title} className="w-12 h-16 object-cover rounded" />}
                     <div>
                       <h4 className="font-semibold text-xs sm:text-sm truncate">{filtered[i].title}</h4>
@@ -142,7 +142,7 @@ export default function HomePage() {
                   </div>
                 </Link>
               ) : (
-                <div key={i} className="bg-gray-100 dark:bg-gray-800 rounded flex items-center justify-center h-16">Empty</div>
+                <div key={i} className="bg-gray-100 dark:bg-gray-800 rounded flex items-center justify-center h-16 min-w-[120px]">Empty</div>
               )
             ))}
           </div>
