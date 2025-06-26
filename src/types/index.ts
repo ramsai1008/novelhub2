@@ -5,6 +5,8 @@ export type Novel = {
   author?: string
   cover?: string
   tags?: string[]
+  genres?: string[]
+  chapters?: Chapter[]
   featured?: boolean
   createdAt?: number
   status?: 'Ongoing' | 'Completed'

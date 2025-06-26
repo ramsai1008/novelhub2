@@ -72,3 +72,61 @@ export const getAllNovels = async (): Promise<any[]> => {
   const snapshot = await getDocs(collection(db, "novels"));
   return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 };
+
+// Get all unique genres from novels
+export const getGenres = async (): Promise<string[]> => {
+  const snapshot = await getDocs(collection(db, "novels"));
+  const genresSet = new Set<string>();
+  snapshot.docs.forEach((doc) => {
+    const data = doc.data();
+    if (Array.isArray(data.tags)) {
+      data.tags.forEach((tag: string) => genresSet.add(tag));
+    }
+  });
+  return Array.from(genresSet);
+};
+
+// Get novels by genre
+export const getNovelsByGenre = async (genre: string): Promise<any[]> => {
+  const snapshot = await getDocs(collection(db, "novels"));
+  return snapshot.docs
+    .map((doc) => ({ id: doc.id, ...(doc.data() as { tags?: string[] }) }))
+    .filter((novel) => Array.isArray(novel.tags) && novel.tags.includes(genre));
+};
+
+// Get a single novel by ID, including its chapters
+export const getNovelById = async (id: string): Promise<any | null> => {
+  const novelDoc = doc(db, "novels", id);
+  const novelSnap = await getDocs(collection(db, "novels"));
+  let novelData = null;
+  novelSnap.forEach((docSnap) => {
+    if (docSnap.id === id) {
+      novelData = { id: docSnap.id, ...docSnap.data() };
+    }
+  });
+  if (!novelData) return null;
+  // Fetch chapters
+  const chaptersSnap = await getDocs(collection(db, "novels", id, "chapters"));
+  const chapters = chaptersSnap.docs.map((c) => ({ id: c.id, ...c.data() }));
+  return { ...novelData, chapters };
+};
+
+// Get a single chapter by ID
+export const getChapterById = async (novelId: string, chapterId: string): Promise<any | null> => {
+  const chapterRef = doc(db, "novels", novelId, "chapters", chapterId);
+  const chapterSnap = await getDocs(collection(db, "novels", novelId, "chapters"));
+  let chapterData = null;
+  chapterSnap.forEach((docSnap) => {
+    if (docSnap.id === chapterId) {
+      chapterData = { id: docSnap.id, ...docSnap.data() };
+    }
+  });
+  return chapterData;
+};
+
+// Get all chapters for a novel
+export const getChaptersByNovelId = async (novelId: string): Promise<any[]> => {
+  const chaptersRef = collection(db, "novels", novelId, "chapters");
+  const snapshot = await getDocs(chaptersRef);
+  return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+};
