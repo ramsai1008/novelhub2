@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { getFeaturedNovels, getUserBookmarks } from '../lib/firebase';
+import { getFeaturedNovels, getUserBookmarks, getChaptersByNovelId } from '../lib/firebase';
 import { useAuth } from '../lib/useAuth';
 import { Novel } from '../types';
 
@@ -11,6 +11,7 @@ export default function HomePage() {
   const [bookmarked, setBookmarked] = useState<Novel[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
+  const [latestUpdates, setLatestUpdates] = useState<any[]>([]);
 
   const { user } = useAuth();
 
@@ -24,6 +25,27 @@ export default function HomePage() {
         const bookmarks = await getUserBookmarks(user.uid);
         setBookmarked(bookmarks as Novel[]);
       }
+
+      // Fetch latest updated chapters across all novels
+      let updates: any[] = [];
+      for (const novel of allNovels) {
+        const chapters = await getChaptersByNovelId(novel.id);
+        if (chapters && chapters.length > 0) {
+          // Find latest chapter by createdAt
+          const latest = chapters.reduce((a, b) => (a.createdAt > b.createdAt ? a : b));
+          updates.push({
+            novelId: novel.id,
+            novelTitle: novel.title,
+            chapterId: latest.id,
+            chapterTitle: latest.title,
+            chapterNumber: chapters.findIndex(c => c.id === latest.id) + 1,
+            updatedAt: latest.createdAt,
+          });
+        }
+      }
+      // Sort by updatedAt desc, take top 20
+      updates.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+      setLatestUpdates(updates.slice(0, 20));
     };
 
     fetchData();
@@ -137,6 +159,26 @@ export default function HomePage() {
               )
             ))}
           </div>
+        </div>
+      </div>
+
+      {/* 📢 Latest Updates */}
+      <div className="mt-10">
+        <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4">📢 Latest Updated Chapters</h2>
+        <div className="bg-white dark:bg-gray-900 rounded shadow p-3 sm:p-4">
+          {latestUpdates.length === 0 ? (
+            <div className="text-gray-500 text-sm">No recent updates.</div>
+          ) : (
+            <ul className="divide-y divide-gray-200 dark:divide-gray-700">
+              {latestUpdates.map((item, idx) => (
+                <li key={item.novelId + item.chapterId} className="py-2 flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4">
+                  <Link href={`/novels/${item.novelId}`} className="font-semibold text-blue-700 dark:text-blue-400 hover:underline text-sm sm:text-base truncate max-w-xs sm:max-w-sm">{item.novelTitle}</Link>
+                  <span className="text-xs text-gray-500">Ch. {item.chapterNumber}: {item.chapterTitle}</span>
+                  <span className="text-xs text-gray-400 ml-auto">{item.updatedAt ? new Date(item.updatedAt).toLocaleString() : ''}</span>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
 
