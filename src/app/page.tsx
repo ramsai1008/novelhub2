@@ -1,19 +1,22 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getFeaturedNovels, getUserBookmarks, getChaptersByNovelId } from '../lib/firebase';
 import { useAuth } from '../lib/useAuth';
 import { Novel } from '../types';
+import { SearchContext } from '../context/SearchContext';
 
 export default function HomePage() {
   const [novels, setNovels] = useState<Novel[]>([]);
   const [bookmarked, setBookmarked] = useState<Novel[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [latestUpdates, setLatestUpdates] = useState<any[]>([]);
 
   const { user } = useAuth();
+
+  // Use searchTerm from context
+  const { searchTerm } = useContext(SearchContext);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -63,31 +66,6 @@ export default function HomePage() {
     <div className="px-2 py-4 sm:px-4 sm:py-6 max-w-7xl mx-auto">
       {/* 🔗 Login/Register Links */}
       {/* Removed homepage login/register links to avoid duplicate navbar buttons */}
-
-      {/* 🔍 Search Bar */}
-      <div className="relative max-w-full sm:max-w-2xl mx-auto mb-8 sm:mb-10">
-        <input
-          type="text"
-          placeholder="Search novels..."
-          value={searchTerm}
-          onChange={e => setSearchTerm(e.target.value)}
-          className="w-full pl-12 pr-4 py-3 rounded border border-gray-300 shadow focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white dark:border-gray-600 text-sm sm:text-base"
-        />
-        <svg
-          className="absolute left-4 top-3 w-5 h-5 text-gray-400"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M21 21l-4.35-4.35M11 18a7 7 0 100-14 7 7 0 000 14z"
-          />
-        </svg>
-      </div>
 
       {/* 📌 Continue Reading */}
       {user && bookmarked.length > 0 && (
