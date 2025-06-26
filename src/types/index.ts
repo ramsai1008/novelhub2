@@ -10,6 +10,7 @@ export type Novel = {
   featured?: boolean
   createdAt?: number
   status?: 'Ongoing' | 'Completed'
+  updatedAt?: string | number
 }
 
 export type Chapter = {

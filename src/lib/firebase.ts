@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, updateDoc, setDoc, serverTimestamp } from "firebase/firestore";
+import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, updateDoc, setDoc, serverTimestamp, getDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -55,6 +55,22 @@ export async function logChapterRead(userId: string, novelId: string, chapterId:
     readAt: serverTimestamp(),
   });
 }
+
+// Set the last read chapter for a user
+export const setLastReadChapter = async (userId: string, novelId: string, chapterId: string) => {
+  const ref = doc(db, `users/${userId}/lastRead`, novelId);
+  await setDoc(ref, { chapterId });
+};
+
+// Get the last read chapter for a user
+export const getLastReadChapter = async (userId: string, novelId: string): Promise<string | null> => {
+  const ref = doc(db, `users/${userId}/lastRead`, novelId);
+  const snap = await getDoc(ref);
+  if (snap.exists()) {
+    return snap.data().chapterId || null;
+  }
+  return null;
+};
 
 // Fetch featured novels (example: all novels, or you can filter by a 'featured' field)
 export const getFeaturedNovels = async (): Promise<any[]> => {

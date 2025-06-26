@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
   title: "NovelHub",
-  description: "A novel reading website like ReadNovelFull",
+  description: "A novel reading website",
 };
 
 export default function RootLayout({
@@ -18,62 +18,19 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body
-        className={`${inter.className} bg-white dark:bg-black text-black dark:text-white transition-colors min-h-screen`}
-      >
+      <body className={`${inter.className} bg-white dark:bg-black text-black dark:text-white transition-colors min-h-screen`}>
         <ThemeProvider>
-          {/* HEADER */}
-          <header className="bg-gray-100 dark:bg-gray-900 shadow sticky top-0 z-50">
-            <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-              <div className="text-xl font-bold text-blue-600 dark:text-blue-400">
-                <Link href="/">NovelHub</Link>
-              </div>
-              <nav className="space-x-4 text-sm md:text-base">
-                <Link href="/" className="hover:underline">
-                  Home
-                </Link>
-                <Link href="/genres" className="hover:underline">
-                  Genres
-                </Link>
-                <Link href="/latest" className="hover:underline">
-                  Latest
-                </Link>
-                <Link href="/bookmarks" className="hover:underline">
-                  Bookmarks
-                </Link>
-              </nav>
-              <div className="flex items-center space-x-2">
-                <input
-                  type="text"
-                  placeholder="Search novels..."
-                  className="px-2 py-1 rounded border dark:bg-gray-800 dark:border-gray-700 text-sm"
-                />
-                <ThemeToggle />
-                <Link href="/login" className="hover:underline text-sm">
-                  Login
-                </Link>
-              </div>
+          <nav className="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
+            <div className="space-x-4">
+              <Link href="/" className="hover:underline">Home</Link>
+              <Link href="/bookmarks" className="hover:underline">Bookmarks</Link>
+              <Link href="/history" className="hover:underline">History</Link>
+              <Link href="/dashboard" className="hover:underline">Dashboard</Link>
+              <Link href="/admin" className="hover:underline">Admin</Link>
             </div>
-          </header>
-
-          {/* MAIN */}
-          <main className="container mx-auto px-4 py-6">
-            {children}
-          </main>
-
-          {/* FOOTER */}
-          <footer className="bg-gray-200 dark:bg-gray-800 text-sm text-center py-4 mt-auto">
-            <div className="container mx-auto px-4">
-              &copy; {new Date().getFullYear()} NovelHub. All rights reserved. |{" "}
-              <Link href="/privacy" className="hover:underline">
-                Privacy Policy
-              </Link>{" "}
-              |{" "}
-              <Link href="/terms" className="hover:underline">
-                Terms
-              </Link>
-            </div>
-          </footer>
+            <ThemeToggle />
+          </nav>
+          <main className="p-4">{children}</main>
         </ThemeProvider>
       </body>
     </html>

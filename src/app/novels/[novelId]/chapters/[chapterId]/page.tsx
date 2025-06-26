@@ -3,7 +3,7 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { getChapterById, getChaptersByNovelId, setLastReadChapter } from '../../../../../lib/firebase';
+import { getChapterById, getChaptersByNovelId, setLastReadChapter, logChapterRead } from '../../../../../lib/firebase';
 import { useAuth } from '../../../../../lib/useAuth';
 import { Chapter } from '../../../../../types';
 
@@ -18,17 +18,17 @@ export default function ChapterPage() {
 
   useEffect(() => {
     if (typeof id === 'string' && typeof chapterId === 'string') {
-      getChapterById(id, chapterId).then(data => setChapter(data));
+      getChapterById(id, chapterId).then(data => {
+        setChapter(data);
+        if (user && data) {
+          setLastReadChapter(user.uid, id, chapterId);
+          logChapterRead(user.uid, id, chapterId, data.title || `Chapter`);
+        }
+      });
       getChaptersByNovelId(id).then(list => {
         setChapterList(list);
         setLoading(false);
       });
-
-      if (user) {
-  setLastReadChapter(user.uid, id, chapterId);
-  logChapterRead(user.uid, id, chapterId, data.title || `Chapter`);
-}
-
     }
   }, [id, chapterId, user]);
 
