@@ -43,6 +43,10 @@ export default function HomePage() {
           });
         }
       }
+      // Only include updates from the last 30 days
+      const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
+      const now = Date.now();
+      updates = updates.filter(u => u.updatedAt && now - u.updatedAt <= THIRTY_DAYS);
       // Sort by updatedAt desc, take top 20
       updates.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
       setLatestUpdates(updates.slice(0, 20));
