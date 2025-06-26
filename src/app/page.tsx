@@ -36,16 +36,7 @@ export default function HomePage() {
   return (
     <div className="px-2 py-4 sm:px-4 sm:py-6 max-w-7xl mx-auto">
       {/* 🔗 Login/Register Links */}
-      {!user && (
-        <div className="fixed right-4 top-4 flex gap-2 z-20 sm:right-8 sm:top-8">
-          <Link href="/login" className="px-3 py-2 rounded bg-blue-600 text-white font-semibold shadow hover:bg-blue-700 transition text-sm sm:text-base">
-            Login
-          </Link>
-          <Link href="/register" className="px-3 py-2 rounded bg-green-600 text-white font-semibold shadow hover:bg-green-700 transition text-sm sm:text-base">
-            Register
-          </Link>
-        </div>
-      )}
+      {/* Removed homepage login/register links to avoid duplicate navbar buttons */}
 
       {/* 🔍 Search Bar */}
       <div className="relative max-w-full sm:max-w-2xl mx-auto mb-8 sm:mb-10">
