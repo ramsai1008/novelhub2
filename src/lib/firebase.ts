@@ -2,6 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, updateDoc, setDoc, serverTimestamp, getDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+import Link from 'next/link';
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -157,3 +158,15 @@ export const getChaptersByNovelId = async (novelId: string): Promise<any[]> => {
   const snapshot = await getDocs(chaptersRef);
   return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 };
+
+// Get user reading history
+export const getUserHistory = async (userId: string): Promise<any[]> => {
+  const historySnap = await getDocs(collection(db, `users/${userId}/history`));
+  return historySnap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+};
+
+// In Next.js, use Link from 'next/link' for client-side navigation
+// Example usage in a component:
+// import Link from 'next/link';
+// <Link href="/login">Login</Link>
+// <Link href="/register">Register</Link>
