@@ -1,12 +1,10 @@
 'use client'
 
-import { signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
+import { signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword } from 'firebase/auth'
 import { auth } from '../../lib/firebase'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useAuth } from '../../lib/useAuth'
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../../lib/firebase';
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -14,9 +12,6 @@ export default function RegisterPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
-  const [adminEmail, setAdminEmail] = useState('')
-  const [adminPassword, setAdminPassword] = useState('')
-  const [adminError, setAdminError] = useState<string | null>(null)
 
   useEffect(() => {
     if (user) router.push('/')
@@ -37,29 +32,6 @@ export default function RegisterPage() {
       await createUserWithEmailAndPassword(auth, email, password)
     } catch (err: any) {
       setError(err.message || 'Registration failed.')
-    }
-  }
-
-  const ADMIN_EMAIL = 'admin@yourdomain.com' // Change to your admin email
-
-  const handleAdminLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setAdminError(null);
-    if (adminEmail !== ADMIN_EMAIL) {
-      setAdminError('Access denied. Not an admin email.');
-      return;
-    }
-    try {
-      const cred = await signInWithEmailAndPassword(auth, adminEmail, adminPassword);
-      // Firestore role check
-      const userDoc = await getDoc(doc(db, 'users', cred.user.uid));
-      if (!userDoc.exists() || !userDoc.data().isAdmin) {
-        setAdminError('Access denied. Not an admin user.');
-        return;
-      }
-      router.push('/admin');
-    } catch (err: any) {
-      setAdminError('Admin login failed.');
     }
   }
 
@@ -103,35 +75,6 @@ export default function RegisterPage() {
           </button>
         </form>
         {error && <div className="mb-3 sm:mb-4 text-red-500 text-center text-sm">{error}</div>}
-        {/* Admin Login Section */}
-        <div className="mt-6 border-t pt-4">
-          <h2 className="text-base sm:text-lg font-semibold mb-2 text-center">Admin Login</h2>
-          <form onSubmit={handleAdminLogin} className="mb-3 sm:mb-4 bg-gray-50 dark:bg-gray-700 p-3 sm:p-4 rounded">
-            <input
-              type="email"
-              placeholder="Admin Email"
-              value={adminEmail}
-              onChange={e => setAdminEmail(e.target.value)}
-              className="w-full mb-2 sm:mb-3 px-3 py-2 border rounded focus:outline-none focus:ring text-sm"
-              required
-            />
-            <input
-              type="password"
-              placeholder="Admin Password"
-              value={adminPassword}
-              onChange={e => setAdminPassword(e.target.value)}
-              className="w-full mb-2 sm:mb-4 px-3 py-2 border rounded focus:outline-none focus:ring text-sm"
-              required
-            />
-            <button
-              type="submit"
-              className="w-full bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 mb-2 text-sm sm:text-base"
-            >
-              Admin Login
-            </button>
-            {adminError && <div className="mb-2 text-red-500 text-center text-xs sm:text-sm">{adminError}</div>}
-          </form>
-        </div>
       </div>
     </div>
   )
