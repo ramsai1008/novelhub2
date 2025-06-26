@@ -3,8 +3,7 @@ import Link from "next/link";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "../context/ThemeContext";
 import { ThemeToggle } from "../components/ThemeToggle";
-import { useAuth } from "../lib/useAuth";
-import SignOutButton from "../components/SignOutButton";
+import NavbarUserActions from "../components/NavbarUserActions";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,7 +17,6 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { user } = useAuth();
   return (
     <html lang="en">
       <head>
@@ -36,7 +34,7 @@ export default function RootLayout({
             </div>
             <div className="flex items-center gap-4">
               <ThemeToggle />
-              {user && <SignOutButton />}
+              <NavbarUserActions />
             </div>
           </nav>
           <main className="p-4">{children}</main>
