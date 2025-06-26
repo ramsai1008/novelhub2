@@ -34,30 +34,30 @@ export default function HomePage() {
   );
 
   return (
-    <div className="px-4 py-6 max-w-7xl mx-auto">
+    <div className="px-2 py-4 sm:px-4 sm:py-6 max-w-7xl mx-auto">
       {/* 🔗 Login/Register Links */}
       {!user && (
-        <div className="absolute right-8 top-8 flex gap-3 z-10">
-          <Link href="/login" className="px-4 py-2 rounded bg-blue-600 text-white font-semibold shadow hover:bg-blue-700 transition">
+        <div className="fixed right-4 top-4 flex gap-2 z-20 sm:right-8 sm:top-8">
+          <Link href="/login" className="px-3 py-2 rounded bg-blue-600 text-white font-semibold shadow hover:bg-blue-700 transition text-sm sm:text-base">
             Login
           </Link>
-          <Link href="/register" className="px-4 py-2 rounded bg-green-600 text-white font-semibold shadow hover:bg-green-700 transition">
+          <Link href="/register" className="px-3 py-2 rounded bg-green-600 text-white font-semibold shadow hover:bg-green-700 transition text-sm sm:text-base">
             Register
           </Link>
         </div>
       )}
 
       {/* 🔍 Search Bar */}
-      <div className="relative max-w-2xl mx-auto mb-10">
+      <div className="relative max-w-full sm:max-w-2xl mx-auto mb-8 sm:mb-10">
         <input
           type="text"
           placeholder="Search novels..."
           value={searchTerm}
           onChange={e => setSearchTerm(e.target.value)}
-          className="w-full pl-12 pr-4 py-3 rounded border border-gray-300 shadow focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white dark:border-gray-600"
+          className="w-full pl-12 pr-4 py-3 rounded border border-gray-300 shadow focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white dark:border-gray-600 text-sm sm:text-base"
         />
         <svg
-          className="absolute left-4 top-3.5 w-5 h-5 text-gray-400"
+          className="absolute left-4 top-3 w-5 h-5 text-gray-400"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -74,13 +74,13 @@ export default function HomePage() {
 
       {/* 📌 Continue Reading */}
       {user && bookmarked.length > 0 && (
-        <div className="mb-10">
-          <h2 className="text-xl font-semibold mb-4">📌 Continue Reading</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        <div className="mb-8 sm:mb-10">
+          <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">📌 Continue Reading</h2>
+          <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
             {bookmarked.map(novel => (
               <Link key={novel.id} href={`/novels/${novel.id}`}>
-                <div className="p-4 bg-white dark:bg-gray-900 rounded shadow hover:bg-gray-50 dark:hover:bg-gray-800 transition">
-                  <p className="text-sm font-medium truncate">{novel.title}</p>
+                <div className="p-3 sm:p-4 bg-white dark:bg-gray-900 rounded shadow hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+                  <p className="text-xs sm:text-sm font-medium truncate">{novel.title}</p>
                 </div>
               </Link>
             ))}
@@ -89,32 +89,69 @@ export default function HomePage() {
       )}
 
       {/* 🎯 Featured Novels */}
-      <h2 className="text-2xl font-bold mb-4">🎯 Featured Novels</h2>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
-        {filtered.map(novel => (
-          <Link key={novel.id} href={`/novels/${novel.id}`}>
-            <div className="bg-white dark:bg-gray-900 rounded overflow-hidden shadow hover:shadow-lg transition">
-              {novel.cover && (
-                <img
-                  src={novel.cover}
-                  alt={novel.title}
-                  className="w-full h-48 object-cover"
-                />
-              )}
-              <div className="p-3">
-                <h3 className="font-semibold truncate">{novel.title}</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
-                  {novel.description?.slice(0, 80)}...
-                </p>
-              </div>
-            </div>
-          </Link>
-        ))}
+      <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">🎯 Featured Novels</h2>
+      <div className="w-full overflow-x-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-11 gap-2 sm:gap-4 min-h-[200px]">
+          {/* Large slot */}
+          <div className="sm:col-span-5 row-span-2">
+            {filtered[0] ? (
+              <Link href={`/novels/${filtered[0].id}`}>
+                <div className="bg-white dark:bg-gray-900 rounded-lg shadow hover:shadow-lg transition h-full flex flex-col">
+                  {filtered[0].cover && (
+                    <img src={filtered[0].cover} alt={filtered[0].title} className="w-full h-48 sm:h-80 object-cover rounded-t-lg" />
+                  )}
+                  <div className="p-3 flex-1 flex flex-col">
+                    <h3 className="font-bold text-lg sm:text-xl mb-1 truncate">{filtered[0].title}</h3>
+                    <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 line-clamp-3">{filtered[0].description?.slice(0, 120)}...</p>
+                  </div>
+                </div>
+              </Link>
+            ) : (
+              <div className="bg-gray-100 dark:bg-gray-800 rounded-lg h-full flex items-center justify-center min-h-[200px]">No featured novel</div>
+            )}
+          </div>
+          {/* 5 small slots left */}
+          <div className="sm:col-span-3 flex flex-col gap-2">
+            {[1,2,3,4,5].map((i) => (
+              filtered[i] ? (
+                <Link key={filtered[i].id} href={`/novels/${filtered[i].id}`}> 
+                  <div className="bg-white dark:bg-gray-900 rounded shadow hover:shadow-lg transition flex items-center gap-2 p-2">
+                    {filtered[i].cover && <img src={filtered[i].cover} alt={filtered[i].title} className="w-12 h-16 object-cover rounded" />}
+                    <div>
+                      <h4 className="font-semibold text-xs sm:text-sm truncate">{filtered[i].title}</h4>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{filtered[i].description?.slice(0, 40)}...</p>
+                    </div>
+                  </div>
+                </Link>
+              ) : (
+                <div key={i} className="bg-gray-100 dark:bg-gray-800 rounded flex items-center justify-center h-16">Empty</div>
+              )
+            ))}
+          </div>
+          {/* 5 small slots right */}
+          <div className="sm:col-span-3 flex flex-col gap-2">
+            {[6,7,8,9,10].map((i) => (
+              filtered[i] ? (
+                <Link key={filtered[i].id} href={`/novels/${filtered[i].id}`}> 
+                  <div className="bg-white dark:bg-gray-900 rounded shadow hover:shadow-lg transition flex items-center gap-2 p-2">
+                    {filtered[i].cover && <img src={filtered[i].cover} alt={filtered[i].title} className="w-12 h-16 object-cover rounded" />}
+                    <div>
+                      <h4 className="font-semibold text-xs sm:text-sm truncate">{filtered[i].title}</h4>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{filtered[i].description?.slice(0, 40)}...</p>
+                    </div>
+                  </div>
+                </Link>
+              ) : (
+                <div key={i} className="bg-gray-100 dark:bg-gray-800 rounded flex items-center justify-center h-16">Empty</div>
+              )
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* ❌ No Results */}
       {!loading && filtered.length === 0 && (
-        <p className="text-center text-gray-500 mt-10">
+        <p className="text-center text-gray-500 mt-8 sm:mt-10 text-sm sm:text-base">
           No novels found for “{searchTerm}”
         </p>
       )}

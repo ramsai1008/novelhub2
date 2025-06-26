@@ -20,12 +20,12 @@ export default function DashboardPage() {
     return () => unsubscribe();
   }, [router]);
 
-  if (!user) return <p>Loading...</p>;
+  if (!user) return <p className="p-6 text-center text-sm">Loading...</p>;
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">Welcome, {user.email}</h1>
-      <p>Your dashboard content goes here.</p>
+    <div className="max-w-md w-full mx-auto p-4 sm:p-6">
+      <h1 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Welcome, {user.email}</h1>
+      <p className="text-sm sm:text-base">Your dashboard content goes here.</p>
     </div>
   );
 }

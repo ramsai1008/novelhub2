@@ -3,6 +3,8 @@ import Link from "next/link";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "../context/ThemeContext";
 import { ThemeToggle } from "../components/ThemeToggle";
+import { useAuth } from "../lib/useAuth";
+import SignOutButton from "../components/SignOutButton";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,8 +18,12 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const { user } = useAuth();
   return (
     <html lang="en">
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </head>
       <body className={`${inter.className} bg-white dark:bg-black text-black dark:text-white transition-colors min-h-screen`}>
         <ThemeProvider>
           <nav className="p-4 bg-gray-100 dark:bg-gray-900 flex justify-between items-center">
@@ -28,7 +34,10 @@ export default function RootLayout({
               <Link href="/dashboard" className="hover:underline">Dashboard</Link>
               <Link href="/admin" className="hover:underline">Admin</Link>
             </div>
-            <ThemeToggle />
+            <div className="flex items-center gap-4">
+              <ThemeToggle />
+              {user && <SignOutButton />}
+            </div>
           </nav>
           <main className="p-4">{children}</main>
         </ThemeProvider>

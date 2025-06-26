@@ -66,7 +66,7 @@ export default function HistoryPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
+    <div className="max-w-2xl w-full mx-auto p-3 sm:p-6">
       <h1 className="text-2xl font-bold mb-6">📖 Reading History</h1>
 
       {grouped.length === 0 ? (

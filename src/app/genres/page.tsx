@@ -22,15 +22,15 @@ export default function GenresPage() {
   }, [selectedGenre]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6">
-      <h1 className="text-2xl font-bold mb-4">📚 Browse by Genre</h1>
+    <div className="max-w-7xl mx-auto px-2 sm:px-4 py-4 sm:py-6">
+      <h1 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">📚 Browse by Genre</h1>
 
-      <div className="flex flex-wrap gap-3 mb-6">
+      <div className="flex flex-wrap gap-2 sm:gap-3 mb-4 sm:mb-6">
         {genres.map(genre => (
           <button
             key={genre}
             onClick={() => setSelectedGenre(genre)}
-            className={`px-4 py-2 rounded-full border text-sm hover:bg-blue-500 hover:text-white transition ${
+            className={`px-3 py-1 sm:px-4 sm:py-2 rounded-full border text-xs sm:text-sm hover:bg-blue-500 hover:text-white transition ${
               selectedGenre === genre
                 ? 'bg-blue-600 text-white'
                 : 'bg-white dark:bg-gray-800 dark:text-white border-gray-300 dark:border-gray-700'
@@ -43,7 +43,7 @@ export default function GenresPage() {
 
       {selectedGenre && (
         <div>
-          <h2 className="text-xl font-semibold mb-3">Novels in "{selectedGenre}"</h2>
+          <h2 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-4">Novels in "{selectedGenre}"</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
             {novels.map(novel => (
               <Link key={novel.id} href={`/novels/${novel.id}`}>

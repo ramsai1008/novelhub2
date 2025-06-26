@@ -55,17 +55,17 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
-      <div className="bg-white dark:bg-gray-800 p-8 rounded shadow-md w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-6 text-center">Sign In</h1>
-        {error && <div className="mb-4 text-red-500 text-center">{error}</div>}
-        <form onSubmit={handleEmailLogin} className="mb-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 px-2 sm:px-0">
+      <div className="bg-white dark:bg-gray-800 p-4 sm:p-8 rounded shadow-md w-full max-w-xs sm:max-w-md">
+        <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-center">Sign In</h1>
+        {error && <div className="mb-3 sm:mb-4 text-red-500 text-center text-sm">{error}</div>}
+        <form onSubmit={handleEmailLogin} className="mb-3 sm:mb-4">
           <input
             type="email"
             placeholder="Email"
             value={email}
             onChange={e => setEmail(e.target.value)}
-            className="w-full mb-3 px-3 py-2 border rounded focus:outline-none focus:ring"
+            className="w-full mb-2 sm:mb-3 px-3 py-2 border rounded focus:outline-none focus:ring text-sm"
             required
           />
           <input
@@ -73,13 +73,13 @@ export default function LoginPage() {
             placeholder="Password"
             value={password}
             onChange={e => setPassword(e.target.value)}
-            className="w-full mb-4 px-3 py-2 border rounded focus:outline-none focus:ring"
+            className="w-full mb-2 sm:mb-4 px-3 py-2 border rounded focus:outline-none focus:ring text-sm"
             required
           />
-          <div className="mb-4 text-right">
+          <div className="mb-2 text-right">
             <button
               type="button"
-              className="text-sm text-blue-600 hover:underline"
+              className="text-xs text-blue-600 hover:underline"
               onClick={() => setShowReset(true)}
             >
               Forgot password?
@@ -87,42 +87,42 @@ export default function LoginPage() {
           </div>
           <button
             type="submit"
-            className="w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 mb-2"
+            className="w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 mb-2 text-sm sm:text-base"
           >
             Sign in with Email
           </button>
         </form>
         <button
           onClick={handleGoogleLogin}
-          className="w-full flex items-center justify-center gap-3 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
+          className="w-full flex items-center justify-center gap-2 sm:gap-3 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 text-sm sm:text-base"
         >
           <img
             src="https://www.svgrepo.com/show/475656/google-color.svg"
             alt="Google icon"
-            className="w-5 h-5"
+            className="w-4 h-4 sm:w-5 sm:h-5"
           />
           Sign in with Google
         </button>
-        <p className="text-sm mt-4 text-center">
-          Don't have an account? <a href="/register" className="text-blue-600 hover:underline">Register here</a>
-        </p>
         {showReset && (
-          <form onSubmit={handlePasswordReset} className="mb-4 bg-gray-50 dark:bg-gray-700 p-4 rounded">
-            <label className="block mb-2 text-sm">Enter your email to reset password:</label>
+          <form onSubmit={handlePasswordReset} className="mb-3 sm:mb-4 bg-gray-50 dark:bg-gray-700 p-3 sm:p-4 rounded">
+            <label className="block mb-2 text-xs sm:text-sm">Enter your email to reset password:</label>
             <input
               type="email"
               value={resetEmail}
               onChange={e => setResetEmail(e.target.value)}
-              className="w-full mb-2 px-3 py-2 border rounded focus:outline-none focus:ring"
+              className="w-full mb-2 px-3 py-2 border rounded focus:outline-none focus:ring text-sm"
               required
             />
             <div className="flex gap-2">
-              <button type="submit" className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-sm">Send Reset Email</button>
-              <button type="button" className="text-sm text-gray-500 hover:underline" onClick={() => { setShowReset(false); setResetMsg(null); }}>Cancel</button>
+              <button type="submit" className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-xs sm:text-sm">Send Reset Email</button>
+              <button type="button" className="text-xs text-gray-500 hover:underline" onClick={() => { setShowReset(false); setResetMsg(null); }}>Cancel</button>
             </div>
-            {resetMsg && <div className="mt-2 text-center text-sm text-green-600 dark:text-green-400">{resetMsg}</div>}
+            {resetMsg && <div className="mt-2 text-center text-xs text-green-600 dark:text-green-400">{resetMsg}</div>}
           </form>
         )}
+        <p className="text-xs sm:text-sm mt-3 sm:mt-4 text-center">
+          Don't have an account? <a href="/register" className="text-blue-600 hover:underline">Register here</a>
+        </p>
       </div>
     </div>
   );

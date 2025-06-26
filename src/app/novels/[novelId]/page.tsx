@@ -30,8 +30,8 @@ export default function NovelDetailPage() {
     }
   }, [id, user]);
 
-  if (loading) return <p className="p-6 text-center">Loading novel details...</p>;
-  if (!novel) return <p className="p-6 text-center text-red-500">Novel not found.</p>;
+  if (loading) return <p className="p-4 sm:p-6 text-center text-sm">Loading novel details...</p>;
+  if (!novel) return <p className="p-4 sm:p-6 text-center text-red-500 text-sm">Novel not found.</p>;
 
   const handleReadFirstChapter = () => {
     if (novel?.chapters?.length) {
@@ -47,7 +47,7 @@ export default function NovelDetailPage() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8">
+    <div className="max-w-2xl w-full mx-auto p-3 sm:p-6">
       <div className="flex flex-col md:flex-row gap-6 bg-white dark:bg-gray-900 p-4 rounded-lg shadow">
         {novel.cover && (
           <img
@@ -58,9 +58,9 @@ export default function NovelDetailPage() {
         )}
 
         <div className="flex-1">
-          <h1 className="text-3xl font-bold text-blue-700 dark:text-blue-300 mb-2">{novel.title}</h1>
-          <p className="text-gray-600 dark:text-gray-300 mb-2">Author: {novel.author || 'Unknown Author'}</p>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+          <h1 className="text-2xl sm:text-3xl font-bold text-blue-700 dark:text-blue-300 mb-2">{novel.title}</h1>
+          <p className="text-gray-600 dark:text-gray-300 mb-2 text-sm sm:text-base">Author: {novel.author || 'Unknown Author'}</p>
+          <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-4">
             Chapters: {novel.chapters?.length || 0} | Last updated: {novel.updatedAt || 'N/A'}
           </p>
 

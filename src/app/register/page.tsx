@@ -65,10 +65,10 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
-      <div className="bg-white dark:bg-gray-800 p-8 rounded shadow-md w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 px-2 sm:px-0">
+      <div className="bg-white dark:bg-gray-800 p-4 sm:p-8 rounded shadow-md w-full max-w-xs sm:max-w-md">
         <h1
-          className="text-2xl font-bold mb-6 text-center select-none"
+          className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-center select-none"
           onDoubleClick={() => setShowAdmin(v => !v)}
           title="Double-click to admin login"
         >
@@ -76,22 +76,22 @@ export default function RegisterPage() {
         </h1>
         <button
           onClick={handleGoogleRegister}
-          className="w-full flex items-center justify-center gap-3 bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700"
+          className="w-full flex items-center justify-center gap-2 sm:gap-3 bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 text-sm sm:text-base"
         >
           <img
             src="https://www.svgrepo.com/show/475656/google-color.svg"
             alt="Google icon"
-            className="w-5 h-5"
+            className="w-4 h-4 sm:w-5 sm:h-5"
           />
           Register with Google
         </button>
-        <form onSubmit={handleEmailRegister} className="mb-4">
+        <form onSubmit={handleEmailRegister} className="mb-3 sm:mb-4">
           <input
             type="email"
             placeholder="Email"
             value={email}
             onChange={e => setEmail(e.target.value)}
-            className="w-full mb-3 px-3 py-2 border rounded focus:outline-none focus:ring"
+            className="w-full mb-2 sm:mb-3 px-3 py-2 border rounded focus:outline-none focus:ring text-sm"
             required
           />
           <input
@@ -99,26 +99,26 @@ export default function RegisterPage() {
             placeholder="Password"
             value={password}
             onChange={e => setPassword(e.target.value)}
-            className="w-full mb-4 px-3 py-2 border rounded focus:outline-none focus:ring"
+            className="w-full mb-2 sm:mb-4 px-3 py-2 border rounded focus:outline-none focus:ring text-sm"
             required
           />
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 mb-2"
+            className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 mb-2 text-sm sm:text-base"
           >
             Register with Email
           </button>
         </form>
-        {error && <div className="mb-4 text-red-500 text-center">{error}</div>}
+        {error && <div className="mb-3 sm:mb-4 text-red-500 text-center text-sm">{error}</div>}
         {showAdmin && (
-          <form onSubmit={handleAdminLogin} className="mb-4 bg-gray-50 dark:bg-gray-700 p-4 rounded">
-            <h2 className="text-lg font-semibold mb-2 text-center">Admin Login</h2>
+          <form onSubmit={handleAdminLogin} className="mb-3 sm:mb-4 bg-gray-50 dark:bg-gray-700 p-3 sm:p-4 rounded">
+            <h2 className="text-base sm:text-lg font-semibold mb-2 text-center">Admin Login</h2>
             <input
               type="email"
               placeholder="Admin Email"
               value={adminEmail}
               onChange={e => setAdminEmail(e.target.value)}
-              className="w-full mb-3 px-3 py-2 border rounded focus:outline-none focus:ring"
+              className="w-full mb-2 sm:mb-3 px-3 py-2 border rounded focus:outline-none focus:ring text-sm"
               required
             />
             <input
@@ -126,16 +126,16 @@ export default function RegisterPage() {
               placeholder="Admin Password"
               value={adminPassword}
               onChange={e => setAdminPassword(e.target.value)}
-              className="w-full mb-4 px-3 py-2 border rounded focus:outline-none focus:ring"
+              className="w-full mb-2 sm:mb-4 px-3 py-2 border rounded focus:outline-none focus:ring text-sm"
               required
             />
             <button
               type="submit"
-              className="w-full bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 mb-2"
+              className="w-full bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 mb-2 text-sm sm:text-base"
             >
               Admin Login
             </button>
-            {adminError && <div className="mb-2 text-red-500 text-center">{adminError}</div>}
+            {adminError && <div className="mb-2 text-red-500 text-center text-xs sm:text-sm">{adminError}</div>}
           </form>
         )}
       </div>

@@ -36,26 +36,26 @@ export default function ChapterPage() {
   const prevChapter = currentIndex > 0 ? chapterList[currentIndex - 1] : null;
   const nextChapter = currentIndex < chapterList.length - 1 ? chapterList[currentIndex + 1] : null;
 
-  if (loading) return <p className="p-6 text-center">Loading chapter...</p>;
-  if (!chapter) return <p className="p-6 text-center text-red-500">Chapter not found.</p>;
+  if (loading) return <p className="p-4 sm:p-6 text-center text-sm">Loading chapter...</p>;
+  if (!chapter) return <p className="p-4 sm:p-6 text-center text-red-500 text-sm">Chapter not found.</p>;
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8 bg-white dark:bg-gray-900 rounded-lg shadow-md">
+    <div className="max-w-2xl w-full mx-auto p-3 sm:p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-blue-700 dark:text-blue-400">{chapter.title}</h1>
-        <span className="text-sm text-gray-500 dark:text-gray-400">Chapter {currentIndex + 1} of {chapterList.length}</span>
+        <h1 className="text-xl sm:text-2xl font-bold text-blue-700 dark:text-blue-400">{chapter.title}</h1>
+        <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Chapter {currentIndex + 1} of {chapterList.length}</span>
       </div>
 
       {/* Chapter Dropdown */}
       <div className="mb-6">
-        <label htmlFor="chapter-select" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+        <label htmlFor="chapter-select" className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
           Jump to Chapter:
         </label>
         <select
           id="chapter-select"
           value={chapterId as string}
           onChange={(e) => router.push(`/novels/${id}/chapters/${e.target.value}`)}
-          className="w-full p-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm dark:text-white"
+          className="w-full p-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-xs sm:text-sm dark:text-white"
         >
           {chapterList.map(ch => (
             <option key={ch.id} value={ch.id}>
@@ -65,7 +65,7 @@ export default function ChapterPage() {
         </select>
       </div>
 
-      <article className="prose dark:prose-invert max-w-none text-lg leading-relaxed text-gray-800 dark:text-gray-100">
+      <article className="prose dark:prose-invert max-w-none text-base sm:text-lg leading-relaxed text-gray-800 dark:text-gray-100">
         {chapter.content?.split('\n').map((line, i) => (
           <p key={i} className="mb-4">{line}</p>
         ))}
