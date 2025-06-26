@@ -1,3 +1,5 @@
+"use client";
+
 import "./globals.css";
 import Link from "next/link";
 import { Inter } from "next/font/google";
@@ -6,16 +8,11 @@ import { SearchProvider } from "../context/SearchContext";
 import { ThemeToggle } from "../components/ThemeToggle";
 import NavbarUserActions from "../components/NavbarUserActions";
 import { useAuth } from "../lib/useAuth";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import SearchBar from "../components/SearchBar";
 import { useRouter } from "next/navigation";
 
 const inter = Inter({ subsets: ["latin"] });
-
-export const metadata = {
-  title: "NovelHub",
-  description: "A novel reading website",
-};
 
 export default function RootLayout({
   children,
@@ -74,7 +71,11 @@ export default function RootLayout({
                 <NavbarUserActions />
               </div>
             </nav>
-            <main className="p-4">{children}</main>
+            <main className="p-4">
+              <Suspense fallback={<div>Loading...</div>}>
+                {children}
+              </Suspense>
+            </main>
           </SearchProvider>
         </ThemeProvider>
       </body>
