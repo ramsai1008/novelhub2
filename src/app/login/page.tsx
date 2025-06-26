@@ -58,7 +58,7 @@ export default function LoginPage() {
     }
   };
 
-  const ADMIN_EMAIL = 'admin@yourdomain.com'; // Change to your admin email
+  const ADMIN_EMAIL = 'ramsai0014@gmail.com'; // Change to your admin email
 
   const handleAdminLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -130,23 +130,10 @@ export default function LoginPage() {
           />
           Sign in with Google
         </button>
-        {showReset && (
-          <form onSubmit={handlePasswordReset} className="mb-3 sm:mb-4 bg-gray-50 dark:bg-gray-700 p-3 sm:p-4 rounded">
-            <label className="block mb-2 text-xs sm:text-sm">Enter your email to reset password:</label>
-            <input
-              type="email"
-              value={resetEmail}
-              onChange={e => setResetEmail(e.target.value)}
-              className="w-full mb-2 px-3 py-2 border rounded focus:outline-none focus:ring text-sm"
-              required
-            />
-            <div className="flex gap-2">
-              <button type="submit" className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-xs sm:text-sm">Send Reset Email</button>
-              <button type="button" className="text-xs text-gray-500 hover:underline" onClick={() => { setShowReset(false); setResetMsg(null); }}>Cancel</button>
-            </div>
-            {resetMsg && <div className="mt-2 text-center text-xs text-green-600 dark:text-green-400">{resetMsg}</div>}
-          </form>
-        )}
+        {/* Move the register link here, below user login and above admin login */}
+        <p className="text-xs sm:text-sm mt-3 sm:mt-4 text-center">
+          Don't have an account? <a href="/register" className="text-blue-600 hover:underline">Register here</a>
+        </p>
         <div className="mt-6 border-t pt-4">
           <h2 className="text-base sm:text-lg font-semibold mb-2 text-center">Admin Login</h2>
           <form onSubmit={handleAdminLogin} className="mb-3 sm:mb-4 bg-gray-50 dark:bg-gray-700 p-3 sm:p-4 rounded">
@@ -175,9 +162,6 @@ export default function LoginPage() {
             {adminError && <div className="mb-2 text-red-500 text-center text-xs sm:text-sm">{adminError}</div>}
           </form>
         </div>
-        <p className="text-xs sm:text-sm mt-3 sm:mt-4 text-center">
-          Don't have an account? <a href="/register" className="text-blue-600 hover:underline">Register here</a>
-        </p>
       </div>
     </div>
   );
