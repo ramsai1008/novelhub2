@@ -14,7 +14,6 @@ export default function RegisterPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
-  const [showAdmin, setShowAdmin] = useState(false)
   const [adminEmail, setAdminEmail] = useState('')
   const [adminPassword, setAdminPassword] = useState('')
   const [adminError, setAdminError] = useState<string | null>(null)
@@ -67,13 +66,7 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 px-2 sm:px-0">
       <div className="bg-white dark:bg-gray-800 p-4 sm:p-8 rounded shadow-md w-full max-w-xs sm:max-w-md">
-        <h1
-          className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-center select-none"
-          onDoubleClick={() => setShowAdmin(v => !v)}
-          title="Double-click to admin login"
-        >
-          Register
-        </h1>
+        <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-center">Register</h1>
         <button
           onClick={handleGoogleRegister}
           className="w-full flex items-center justify-center gap-2 sm:gap-3 bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 text-sm sm:text-base"
@@ -110,9 +103,10 @@ export default function RegisterPage() {
           </button>
         </form>
         {error && <div className="mb-3 sm:mb-4 text-red-500 text-center text-sm">{error}</div>}
-        {showAdmin && (
+        {/* Admin Login Section */}
+        <div className="mt-6 border-t pt-4">
+          <h2 className="text-base sm:text-lg font-semibold mb-2 text-center">Admin Login</h2>
           <form onSubmit={handleAdminLogin} className="mb-3 sm:mb-4 bg-gray-50 dark:bg-gray-700 p-3 sm:p-4 rounded">
-            <h2 className="text-base sm:text-lg font-semibold mb-2 text-center">Admin Login</h2>
             <input
               type="email"
               placeholder="Admin Email"
@@ -137,7 +131,7 @@ export default function RegisterPage() {
             </button>
             {adminError && <div className="mb-2 text-red-500 text-center text-xs sm:text-sm">{adminError}</div>}
           </form>
-        )}
+        </div>
       </div>
     </div>
   )
