@@ -3,12 +3,14 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { getChapterById, getChaptersByNovelId } from '../../../../../lib/firebase';
+import { getChapterById, getChaptersByNovelId, setLastReadChapter } from '../../../../../lib/firebase';
+import { useAuth } from '../../../../../lib/useAuth';
 import { Chapter } from '../../../../../types';
 
 export default function ChapterPage() {
   const { id, chapterId } = useParams();
   const router = useRouter();
+  const { user } = useAuth();
 
   const [chapter, setChapter] = useState<Chapter | null>(null);
   const [chapterList, setChapterList] = useState<Chapter[]>([]);
@@ -21,21 +23,46 @@ export default function ChapterPage() {
         setChapterList(list);
         setLoading(false);
       });
-    }
-  }, [id, chapterId]);
 
-  if (loading) return <p className="p-6 text-center">Loading chapter...</p>;
-  if (!chapter) return <p className="p-6 text-center text-red-500">Chapter not found.</p>;
+      if (user) {
+  setLastReadChapter(user.uid, id, chapterId);
+  logChapterRead(user.uid, id, chapterId, data.title || `Chapter`);
+}
+
+    }
+  }, [id, chapterId, user]);
 
   const currentIndex = chapterList.findIndex(c => c.id === chapterId);
   const prevChapter = currentIndex > 0 ? chapterList[currentIndex - 1] : null;
   const nextChapter = currentIndex < chapterList.length - 1 ? chapterList[currentIndex + 1] : null;
+
+  if (loading) return <p className="p-6 text-center">Loading chapter...</p>;
+  if (!chapter) return <p className="p-6 text-center text-red-500">Chapter not found.</p>;
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8 bg-white dark:bg-gray-900 rounded-lg shadow-md">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-blue-700 dark:text-blue-400">{chapter.title}</h1>
         <span className="text-sm text-gray-500 dark:text-gray-400">Chapter {currentIndex + 1} of {chapterList.length}</span>
+      </div>
+
+      {/* Chapter Dropdown */}
+      <div className="mb-6">
+        <label htmlFor="chapter-select" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Jump to Chapter:
+        </label>
+        <select
+          id="chapter-select"
+          value={chapterId as string}
+          onChange={(e) => router.push(`/novels/${id}/chapters/${e.target.value}`)}
+          className="w-full p-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm dark:text-white"
+        >
+          {chapterList.map(ch => (
+            <option key={ch.id} value={ch.id}>
+              {ch.title || `Chapter ${chapterList.indexOf(ch) + 1}`}
+            </option>
+          ))}
+        </select>
       </div>
 
       <article className="prose dark:prose-invert max-w-none text-lg leading-relaxed text-gray-800 dark:text-gray-100">
