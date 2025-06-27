@@ -9,12 +9,12 @@ import Link from 'next/link';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyBreQy9u91K6FMTcoY4rl22zNAw_f0juAo",
-  authDomain: "novelplane.firebaseapp.com",
-  projectId: "novelplane",
-  storageBucket: "novelplane.firebasestorage.app",
-  messagingSenderId: "208383799577",
-  appId: "1:208383799577:web:ca27cea78d7588d73e9588"
+  apiKey: "YOUR_API_KEY_HERE",
+  authDomain: "YOUR_AUTH_DOMAIN_HERE",
+  projectId: "YOUR_PROJECT_ID_HERE",
+  storageBucket: "YOUR_STORAGE_BUCKET_HERE",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID_HERE",
+  appId: "YOUR_APP_ID_HERE"
 };
 
 const app = initializeApp(firebaseConfig);

@@ -58,7 +58,7 @@ export default function LoginPage() {
     }
   };
 
-  const ADMIN_EMAIL = 'ramsai0014@gmail.com'; // Change to your admin email
+  const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL || 'admin@example.com'; // Set your admin email in .env
 
   const handleAdminLogin = async (e: React.FormEvent) => {
     e.preventDefault();
