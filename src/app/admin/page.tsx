@@ -30,7 +30,7 @@ export default function AdminPage() {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      if (firebaseUser?.email === "ramsai0014@gmail.com") {
+      if (firebaseUser?.email === "admin@email.com") {
         setUser(firebaseUser);
         fetchNovels();
       } else {
